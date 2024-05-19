@@ -1,9 +1,10 @@
 import express, { Express, Request, Response } from 'express';
 import ffmpeg, {FfmpegCommand} from 'fluent-ffmpeg';
+import path from 'path';
 
 const app: Express = express();
 app.use(express.json());
-app.use(express.static(__dirname + '/streams'));
+app.use('/stream', express.static(path.join(__dirname, 'streams')));
 
 var input: string = 'test';
 
@@ -35,7 +36,7 @@ app.post('/test', (req: Request, res: Response) => {
         } catch(e: any) {
             console.log('Error!');
             console.log(e.message);
-            res.send({'Error': 'Shit hit the fan'});
+            res.send({'Error': 'There are some issues with ffmprg!'});
         }
     }
     
