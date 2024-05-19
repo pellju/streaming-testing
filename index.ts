@@ -1,7 +1,10 @@
 import express, { Express, Request, Response } from 'express';
+import ffmpeg from 'fluent-ffmpeg';
 
 const app: Express = express();
 app.use(express.json());
+
+var input: string = 'test';
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello world!');
@@ -13,10 +16,19 @@ app.post('/test', (req: Request, res: Response) => {
     if (body === undefined || body.input === undefined) {
         res.json({ 'Error': 'Incorrect body'});
     } else {
+        input = body.input;
         res.json({ 'Info': 'Success' });
     }
     
 });
+
+app.get('/test', (req: Request, res: Response) => {
+    if (input === 'test') {
+        res.status(400).json({ 'Error': 'Please change the input first!' });
+    } else {
+        res.send({ 'Information': "Test works!"});
+    }
+})
 
 app.listen(3000, () => {
     console.log("Server is running at http://127.0.0.1:3000 !");
