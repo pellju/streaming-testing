@@ -6,7 +6,9 @@ const app: Express = express();
 app.use(express.json());
 app.use('/stream', express.static(path.join(__dirname, 'streams')));
 
-var input: string = 'test';
+// ToDo: change these away
+let input: string = 'test';
+let name: string = 'test';
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello world!');
@@ -15,10 +17,14 @@ app.get('/', (req: Request, res: Response) => {
 app.post('/test', (req: Request, res: Response) => {
     const body = req.body;
 
-    if (body === undefined || body.input === undefined) {
+    // ToDo: check that input is a URL and contains .m3u or .m3u8 as type 
+    if (body === undefined || body.input === undefined || body.name === undefined) {
         res.json({ 'Error': 'Incorrect body'});
     } else {
+        // ToDo: sanitize name and input?
+        // Also: add a check to see that if the name exists already, then do not add the channel, but result in error
         input = body.input;
+        name = body.name;
         try {
             ffmpeg(input)
             .addOption('-c', 'copy')
@@ -31,12 +37,12 @@ app.post('/test', (req: Request, res: Response) => {
                 console.log('Following error:');
                 console.log(err.message);
             })
-            .save(__dirname + '/streams/testing.m3u8');
+            .save(__dirname + '/streams/' + name + '.m3u8');
             res.send({ 'Information': "Test works!"});
         } catch(e: any) {
             console.log('Error!');
             console.log(e.message);
-            res.send({'Error': 'There are some issues with ffmprg!'});
+            res.send({'Error': 'There are some issues with ffmpeg!'});
         }
     }
     
