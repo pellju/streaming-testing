@@ -57,7 +57,7 @@ app.post('/test', (req: Request, res: Response) => {
                 streamobject: stream
             };
             streams.push(streamCombination);
-            
+
             res.send({ 'Information': "Test works!"});
         } catch(e: any) {
             console.log('Error!');
@@ -73,7 +73,14 @@ app.get('/test', (req: Request, res: Response) => {
     } else {
         res.send({ 'Information': "Success"});
     }
-})
+});
+
+// ToDo: Add whole addresses, not just names!
+app.get('/streams', (req: Request, res: Response) => {
+    const newItems: string[] = streams.map(item => item.streamname);
+    res.send({"items": newItems});
+
+});
 
 app.listen(3000, () => {
     console.log("Server is running at http://127.0.0.1:3000 !");
