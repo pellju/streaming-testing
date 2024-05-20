@@ -18,7 +18,7 @@ type streaminfo = {
 }
 
 // ToDo: use MongoDB or MariaDB or PostgreSQL instead of array
-const streams: streaminfo[] = [];
+let streams: streaminfo[] = [];
 
 app.get('/', (req: Request, res: Response) => {
     console.log(streams);
@@ -80,6 +80,26 @@ app.get('/streams', (req: Request, res: Response) => {
     const newItems: string[] = streams.map(item => item.streamname);
     res.send({"items": newItems});
 
+});
+
+app.delete('/remove/:name', (req: Request, res: Response) => {
+    // ToDo: Sanitizing
+    const name: string = req.params.name;
+    if (req === undefined || name === undefined) {
+        res.status(400).json({ "Error": "Stream name not defined!" });
+    } else {
+        const streamInfoObject: streaminfo | undefined = streams.find(item => item.streamname === name) || undefined;
+        if (streamInfoObject) {
+            // Getting the streaminfo-object used which is supposed to be removed
+            const removableItemIndex: number = streams.findIndex(item => item.streamname === name);
+            streams[removableItemIndex].streamobject.kill('SIGINT');
+            streams.splice(removableItemIndex, 1);
+
+            res.send({ "Information": "Success!"});
+        } else {
+            res.status(400).json({ "Error": "No such stream name!" })
+        }
+    }
 });
 
 app.listen(3000, () => {
