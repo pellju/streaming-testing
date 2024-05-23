@@ -1,10 +1,22 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express, Request, Response, NextFunction } from 'express';
 import ffmpeg, {FfmpegCommand} from 'fluent-ffmpeg';
 import path from 'path';
 
 // Creating a new Express-server and allowing /stream-paths to access streams-folder (statically)
 const app: Express = express();
 app.use(express.json());
+
+// Creating a middleware to check the 
+const apiCheckerMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    const apikey: string = req.params.apikey;
+    if (apikey === 'secretkey') {
+        next();
+    } else {
+        res.status(403).send({ "Error": "Incorrect API-key!" });
+    }
+};
+
+app.use('/secretstream/:apikey', apiCheckerMiddleware, express.static(path.join(__dirname, 'streams')));
 app.use('/stream', express.static(path.join(__dirname, 'streams')));
 
 // ToDo: change these away
