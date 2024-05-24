@@ -1,6 +1,8 @@
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, { Express, Request, Response } from 'express';
 import ffmpeg, {FfmpegCommand} from 'fluent-ffmpeg';
 import path from 'path';
+
+import { apiCheckerMiddleware } from './middlewares/streamingMiddleware';
 
 // Creating a new Express-server and allowing /stream-paths to access streams-folder (statically)
 const app: Express = express();
@@ -12,17 +14,6 @@ let keys: string[] = [];
 // An extremely simple check if API-key exists
 const checkKey = (key: string): boolean => {
     return keys.indexOf(key) > -1;
-};
-
-// Creating a middleware to check the 
-const apiCheckerMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const apikey: string = req.params.apikey;
-    const existing: boolean = checkKey(apikey); 
-    if (existing) {
-        next();
-    } else {
-        res.status(403).send({ "Error": "Incorrect API-key!" });
-    }
 };
 
 app.use('/secretstream/:apikey', apiCheckerMiddleware, express.static(path.join(__dirname, 'streams')));
@@ -155,3 +146,5 @@ app.get('/keys', (req: Request, res: Response) => {
 app.listen(3000, () => {
     console.log("Server is running at http://127.0.0.1:3000 !");
 });
+
+export { checkKey }
