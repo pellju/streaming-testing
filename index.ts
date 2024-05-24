@@ -6,10 +6,19 @@ import path from 'path';
 const app: Express = express();
 app.use(express.json());
 
+//TEMPORARILY STORING API-KEYS
+let keys: string[] = [];
+
+// An extremely simple check if API-key exists
+const checkKey = (key: string): boolean => {
+    return keys.indexOf(key) > -1;
+};
+
 // Creating a middleware to check the 
 const apiCheckerMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const apikey: string = req.params.apikey;
-    if (apikey === 'secretkey') {
+    const existing: boolean = checkKey(apikey); 
+    if (existing) {
         next();
     } else {
         res.status(403).send({ "Error": "Incorrect API-key!" });
@@ -42,7 +51,7 @@ app.post('/test', (req: Request, res: Response) => {
 
     // ToDo: check that input is a URL and contains .m3u or .m3u8 as type 
     if (body === undefined || body.input === undefined || body.name === undefined) {
-        res.json({ 'Error': 'Incorrect body'});
+        res.status(400).json({ 'Error': 'Incorrect body'});
     } else {
         // ToDo: sanitize name and input?
         // Also: add a check to see that if the name exists already, then do not add the channel, but result in error
@@ -114,6 +123,35 @@ app.delete('/remove/:name', (req: Request, res: Response) => {
     }
 });
 
+// These are just for testing purposes
+app.post('/newapikey', (req: Request, res: Response) => {
+    const body = req.body;
+
+    // ToDo: check that input is a URL and contains .m3u or .m3u8 as type 
+    if (body === undefined || body.key === undefined) {
+        res.status(400).json({ 'Error': 'Incorrect body'});
+    } else {
+        keys.push(body.key);
+        res.send({ 'Information': 'Added a new API-key!'});
+    }
+});
+
+app.delete('/apikeyremoval/:apikey', (req: Request, res: Response) => {
+    const key: string = req.params.apikey;
+    if (key === undefined) {
+        res.status(400).json({ 'Error': 'Key not found!'});
+    } else {
+        const removableKeyIndex: number = keys.findIndex(string => string === key);
+        keys.splice(removableKeyIndex, 1);
+        res.send({ 'Information': 'Removal done!' });
+    }
+});
+
+app.get('/keys', (req: Request, res: Response) => {
+    res.send({ 'keys': keys });
+})
+
+// Running the application
 app.listen(3000, () => {
     console.log("Server is running at http://127.0.0.1:3000 !");
 });
