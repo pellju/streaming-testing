@@ -3,6 +3,7 @@ import ffmpeg, {FfmpegCommand} from 'fluent-ffmpeg';
 import path from 'path';
 
 import { apiCheckerMiddleware } from './middlewares/streamingMiddleware';
+import { openingStream, streams, deleteStream } from './services/ffmpegService';
 
 // Creating a new Express-server and allowing /stream-paths to access streams-folder (statically)
 const app: Express = express();
@@ -23,17 +24,8 @@ app.use('/stream', express.static(path.join(__dirname, 'streams')));
 let input: string = 'test';
 let name: string = 'test';
 
-// Defining custom type for the combination of Strings (names) and Ffmpegs
-type streaminfo = {
-    streamname: string;
-    streamobject: FfmpegCommand;
-}
-
-// ToDo: use MongoDB or MariaDB or PostgreSQL instead of array
-let streams: streaminfo[] = [];
 
 app.get('/', (req: Request, res: Response) => {
-    console.log(streams);
     res.send('Hello world!');
 });
 
@@ -49,32 +41,13 @@ app.post('/test', (req: Request, res: Response) => {
         input = body.input;
         name = body.name;
         try {
-            // Generating stream object
-            const stream: FfmpegCommand = ffmpeg(input)
-            .addOption('-c', 'copy')
-            .addOption('-f', 'hls')
-            .addOption('-hls_time', '10')
-            .addOption('-hls_list_size', '3')
-            .addOption('-hls_delete_threshold', '3')
-            .addOption('-hls_flags delete_segments')
-            .on('error', function(err) {
-                console.log('Following error:');
-                console.log(err.message);
-            })
-            .save(__dirname + '/streams/' + name + '.m3u8');
-
-            // Combning the stream name and stream object and pushing it to the list
-            const streamCombination: streaminfo = {
-                streamname: name,
-                streamobject: stream
+            if (!openingStream(input, name)) {
+                throw new Error ('Issues with ffmpeg!');
             };
-            streams.push(streamCombination);
 
             res.send({ 'Information': "Test works!"});
         } catch(e: any) {
-            console.log('Error!');
-            console.log(e.message);
-            res.send({'Error': 'There are some issues with ffmpeg!'});
+            res.status(400).json({'Error': 'There are some issues with ffmpeg!'});
         }
     }
 });
@@ -100,16 +73,10 @@ app.delete('/remove/:name', (req: Request, res: Response) => {
     if (req === undefined || name === undefined) {
         res.status(400).json({ "Error": "Stream name not defined!" });
     } else {
-        const streamInfoObject: streaminfo | undefined = streams.find(item => item.streamname === name) || undefined;
-        if (streamInfoObject) {
-            // Getting the streaminfo-object used which is supposed to be removed
-            const removableItemIndex: number = streams.findIndex(item => item.streamname === name);
-            streams[removableItemIndex].streamobject.kill('SIGINT');
-            streams.splice(removableItemIndex, 1);
-
-            res.send({ "Information": "Success!"});
+        if (deleteStream(name)) {
+            res.send({ "Information": "Stream deleted!" });
         } else {
-            res.status(400).json({ "Error": "No such stream name!" })
+            res.status(400).json({ "Error": "No such stream name!" });
         }
     }
 });
