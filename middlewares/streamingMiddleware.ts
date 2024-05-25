@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { checkKey } from '..';
+import { checkKey } from '../services/apiKeyService';
 
 // Creating a middleware to check the 
 const apiCheckerMiddleware = (req: Request, res: Response, next: NextFunction) => {

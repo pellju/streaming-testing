@@ -1,21 +1,13 @@
 import express, { Express, Request, Response } from 'express';
-import ffmpeg, {FfmpegCommand} from 'fluent-ffmpeg';
 import path from 'path';
 
 import { apiCheckerMiddleware } from './middlewares/streamingMiddleware';
 import { openingStream, streams, deleteStream } from './services/ffmpegService';
+import { keys, addingApiKey, removeApiKey } from './services/apiKeyService';
 
 // Creating a new Express-server and allowing /stream-paths to access streams-folder (statically)
 const app: Express = express();
 app.use(express.json());
-
-//TEMPORARILY STORING API-KEYS
-let keys: string[] = [];
-
-// An extremely simple check if API-key exists
-const checkKey = (key: string): boolean => {
-    return keys.indexOf(key) > -1;
-};
 
 app.use('/secretstream/:apikey', apiCheckerMiddleware, express.static(path.join(__dirname, 'streams')));
 app.use('/stream', express.static(path.join(__dirname, 'streams')));
@@ -89,8 +81,12 @@ app.post('/newapikey', (req: Request, res: Response) => {
     if (body === undefined || body.key === undefined) {
         res.status(400).json({ 'Error': 'Incorrect body'});
     } else {
-        keys.push(body.key);
-        res.send({ 'Information': 'Added a new API-key!'});
+        if (addingApiKey(body.key)) {
+            res.send({ 'Information': 'Added a new API-key!'});
+        } else {
+            res.status(400).json({ 'Error': 'Error adding new API-key' });
+        }
+        
     }
 });
 
@@ -99,9 +95,12 @@ app.delete('/apikeyremoval/:apikey', (req: Request, res: Response) => {
     if (key === undefined) {
         res.status(400).json({ 'Error': 'Key not found!'});
     } else {
-        const removableKeyIndex: number = keys.findIndex(string => string === key);
-        keys.splice(removableKeyIndex, 1);
-        res.send({ 'Information': 'Removal done!' });
+        if (removeApiKey(key)) {
+            res.send({ 'Information': 'Removal done!' });
+        } else {
+            res.status(400).json({ 'Error': 'Error removing key!'});
+        }
+        
     }
 });
 
@@ -113,5 +112,3 @@ app.get('/keys', (req: Request, res: Response) => {
 app.listen(3000, () => {
     console.log("Server is running at http://127.0.0.1:3000 !");
 });
-
-export { checkKey }
