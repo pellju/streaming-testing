@@ -4,7 +4,7 @@ import path from 'path';
 import { apiCheckerMiddleware } from './middlewares/streamingMiddleware';
 import { openingStream, streams, deleteStream } from './services/ffmpegService';
 import { keys, addingApiKey, removeApiKey } from './services/apiKeyService';
-
+import { addStream, listStreamNames, removeStream } from './controllers/streamController';
 // Creating a new Express-server and allowing /stream-paths to access streams-folder (statically)
 const app: Express = express();
 app.use(express.json());
@@ -33,29 +33,21 @@ app.post('/test', (req: Request, res: Response) => {
         input = body.input;
         name = body.name;
         try {
-            if (!openingStream(input, name)) {
+            if (!addStream(name, input)) {
                 throw new Error ('Issues with ffmpeg!');
             };
 
             res.send({ 'Information': "Test works!"});
         } catch(e: any) {
+            console.log(e.message);
             res.status(400).json({'Error': 'There are some issues with ffmpeg!'});
         }
     }
 });
 
-app.get('/test', (req: Request, res: Response) => {
-    if (input === 'test') {
-        res.status(400).json({ 'Error': 'Please change the input first!' });
-    } else {
-        res.send({ 'Information': "Success"});
-    }
-});
-
 // ToDo: Add whole addresses, not just names!
 app.get('/streams', (req: Request, res: Response) => {
-    const newItems: string[] = streams.map(item => item.streamname);
-    res.send({"items": newItems});
+    res.send({"items": listStreamNames});
 
 });
 
@@ -65,7 +57,7 @@ app.delete('/remove/:name', (req: Request, res: Response) => {
     if (req === undefined || name === undefined) {
         res.status(400).json({ "Error": "Stream name not defined!" });
     } else {
-        if (deleteStream(name)) {
+        if (removeStream(name)) {
             res.send({ "Information": "Stream deleted!" });
         } else {
             res.status(400).json({ "Error": "No such stream name!" });
