@@ -2,8 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import path from 'path';
 
 import { apiCheckerMiddleware } from './middlewares/streamingMiddleware';
-import { openingStream, streams, deleteStream } from './services/ffmpegService';
-import { keys, addingApiKey, removeApiKey } from './services/apiKeyService';
+import { addNewApiKey, deleteApiKey, listKeys } from './controllers/apiController';
 import { addStream, listStreamNames, removeStream } from './controllers/streamController';
 // Creating a new Express-server and allowing /stream-paths to access streams-folder (statically)
 const app: Express = express();
@@ -73,7 +72,7 @@ app.post('/newapikey', (req: Request, res: Response) => {
     if (body === undefined || body.key === undefined) {
         res.status(400).json({ 'Error': 'Incorrect body'});
     } else {
-        if (addingApiKey(body.key)) {
+        if (addNewApiKey(body.key)) {
             res.send({ 'Information': 'Added a new API-key!'});
         } else {
             res.status(400).json({ 'Error': 'Error adding new API-key' });
@@ -87,7 +86,7 @@ app.delete('/apikeyremoval/:apikey', (req: Request, res: Response) => {
     if (key === undefined) {
         res.status(400).json({ 'Error': 'Key not found!'});
     } else {
-        if (removeApiKey(key)) {
+        if (deleteApiKey(key)) {
             res.send({ 'Information': 'Removal done!' });
         } else {
             res.status(400).json({ 'Error': 'Error removing key!'});
@@ -97,8 +96,8 @@ app.delete('/apikeyremoval/:apikey', (req: Request, res: Response) => {
 });
 
 app.get('/keys', (req: Request, res: Response) => {
-    res.send({ 'keys': keys });
-})
+    res.send({ 'keys': listKeys() });
+});
 
 // Running the application
 app.listen(3000, () => {
