@@ -4,6 +4,7 @@ import path from 'path';
 import { apiCheckerMiddleware } from './middlewares/streamingMiddleware';
 import { addNewApiKey, deleteApiKey, listKeys } from './controllers/apiController';
 import { addStream, listStreamNames, removeStream } from './controllers/streamController';
+
 // Creating a new Express-server and allowing /stream-paths to access streams-folder (statically)
 const app: Express = express();
 app.use(express.json());
@@ -11,58 +12,16 @@ app.use(express.json());
 app.use('/secretstream/:apikey', apiCheckerMiddleware, express.static(path.join(__dirname, 'streams')));
 app.use('/stream', express.static(path.join(__dirname, 'streams')));
 
-// ToDo: change these away
-let input: string = 'test';
-let name: string = 'test';
-
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello world!');
 });
 
-app.post('/test', (req: Request, res: Response) => {
-    const body = req.body;
+app.post('/newstream', addStream);
 
-    // ToDo: check that input is a URL and contains .m3u or .m3u8 as type 
-    if (body === undefined || body.input === undefined || body.name === undefined) {
-        res.status(400).json({ 'Error': 'Incorrect body'});
-    } else {
-        // ToDo: sanitize name and input?
-        // Also: add a check to see that if the name exists already, then do not add the channel, but result in error
-        input = body.input;
-        name = body.name;
-        try {
-            if (!addStream(name, input)) {
-                throw new Error ('Issues with ffmpeg!');
-            };
+app.get('/streams', listStreamNames);
 
-            res.send({ 'Information': "Test works!"});
-        } catch(e: any) {
-            console.log(e.message);
-            res.status(400).json({'Error': 'There are some issues with ffmpeg!'});
-        }
-    }
-});
-
-// ToDo: Add whole addresses, not just names!
-app.get('/streams', (req: Request, res: Response) => {
-    res.send({"items": listStreamNames});
-
-});
-
-app.delete('/remove/:name', (req: Request, res: Response) => {
-    // ToDo: Sanitizing
-    const name: string = req.params.name;
-    if (req === undefined || name === undefined) {
-        res.status(400).json({ "Error": "Stream name not defined!" });
-    } else {
-        if (removeStream(name)) {
-            res.send({ "Information": "Stream deleted!" });
-        } else {
-            res.status(400).json({ "Error": "No such stream name!" });
-        }
-    }
-});
+app.delete('/remove/:name', removeStream);
 
 // These are just for testing purposes
 app.post('/newapikey', (req: Request, res: Response) => {
