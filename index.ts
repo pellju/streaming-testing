@@ -2,9 +2,8 @@ import express, { Express, Request, Response } from 'express';
 import path from 'path';
 
 import { apiCheckerMiddleware } from './middlewares/streamingMiddleware';
-import { addNewApiKey, deleteApiKey, listKeys } from './controllers/apiController';
 import { streamingRouter } from './routes/streamingRoutes';
-//import { addStream, listStreamNames, removeStream } from './controllers/streamController';
+import { apiRouter } from './routes/apiRoutes';
 
 // Creating a new Express-server and allowing /stream-paths to access streams-folder (statically)
 const app: Express = express();
@@ -19,14 +18,8 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use(streamingRouter);
+app.use(apiRouter);
 
-app.post('/newapikey', addNewApiKey);
-
-app.delete('/apikeyremoval/:apikey', deleteApiKey);
-
-app.get('/keys', listKeys);
-
-// Running the application
 app.listen(3000, () => {
     console.log("Server is running at http://127.0.0.1:3000 !");
 });
