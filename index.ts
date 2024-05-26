@@ -5,6 +5,8 @@ import { apiCheckerMiddleware } from './middlewares/streamingMiddleware';
 import { streamingRouter } from './routes/streamingRoutes';
 import { apiRouter } from './routes/apiRoutes';
 
+require('dotenv').config()
+
 // Creating a new Express-server and allowing /stream-paths to access streams-folder (statically)
 const app: Express = express();
 app.use(express.json());

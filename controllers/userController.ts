@@ -4,7 +4,7 @@ const userRegistration = (req: Request, res: Response) => {
     const body = req.body;
     const username: string = body.username;
     const password: string = body.password;
-    const invitecode: string = body.invitecode;
+    const invitecode: string = body.invitecode; // Create a simple check afterwards that if the userDatabase is empty, a separate invite code for the first user
 
     if (body === undefined) {
         return res.status(400).json({ 'Error': 'Missing registration data!'});
