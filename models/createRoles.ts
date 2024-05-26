@@ -67,5 +67,3 @@ const createRoles = () => {
         }
     })
 }
-
-export { createRoles }
