@@ -1,5 +1,6 @@
 import {Request, Response } from 'express';
 import { db } from "../models";
+import { signUp, login } from '../services/userService';
 
 const userRegistration = (req: Request, res: Response) => {
     const body = req.body;
@@ -28,6 +29,7 @@ const userRegistration = (req: Request, res: Response) => {
             });
 
             // Add registration function here
+            return signUp(req, res);
 
         } catch (e: any) {
             console.log("Registration error!");
@@ -61,7 +63,9 @@ const userLogin = (req: Request, res: Response) => {
                     res.status(400).json({ 'Error': 'Username not found' });
                 }
             });
-
+            
+            return login(req, res);
+            
         } catch (e: any) {
             console.log("Registration error!");
             console.log(e.message);

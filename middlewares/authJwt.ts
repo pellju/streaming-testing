@@ -3,7 +3,6 @@
 import jwt from 'jsonwebtoken';
 import { db } from '../models';
 import { Request, Response, NextFunction } from 'express';
-import session from 'express-session';
 
 const JWT_SECRET = process.env.COOKIETOKENSECRET;
 
