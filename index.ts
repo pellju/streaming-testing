@@ -4,6 +4,7 @@ import path from 'path';
 import { apiCheckerMiddleware } from './middlewares/streamingMiddleware';
 import { streamingRouter } from './routes/streamingRoutes';
 import { apiRouter } from './routes/apiRoutes';
+import { userRouter } from './routes/userRoutes';
 
 require('dotenv').config()
 
@@ -21,6 +22,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use(streamingRouter);
 app.use(apiRouter);
+app.use(userRouter);
 
 app.listen(3000, () => {
     console.log("Server is running at http://127.0.0.1:3000 !");

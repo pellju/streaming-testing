@@ -1,5 +1,6 @@
 import {Request, Response } from 'express';
 import { db } from "../models";
+import { User } from '../models/user.model';
 import { signUp, login } from '../services/userService';
 
 const userRegistration = (req: Request, res: Response) => {
@@ -20,10 +21,8 @@ const userRegistration = (req: Request, res: Response) => {
         try {
 
             // Set types better:
-            db.User.findOne({username: username}).exec((err: any, user: any) => {
-                if (err) {
-                    res.status(500).json({ 'Error': 'Internal error related to MongoDB!'});
-                } else if (user) {
+            User.findOne({ username: username }).exec().then(user => {
+                if (user) {
                     res.status(400).json({ 'Error': 'User with given username exists!' });
                 }
             });
@@ -54,15 +53,13 @@ const userLogin = (req: Request, res: Response) => {
         try {
 
             // Set types better:
-            db.User.findOne({username: username}).exec((err: any, user: any) => {
-                if (err) {
-                    res.status(500).json({ 'Error': 'Internal error related to MongoDB!'});
-                } else if (user) {
-                    // Adding login service here!
+            User.findOne({ username: username }).exec().then(user => {
+                if (user) {
+                    login(req, res);
                 } else {
                     res.status(400).json({ 'Error': 'Username not found' });
                 }
-            });
+            })
             
             return login(req, res);
             
