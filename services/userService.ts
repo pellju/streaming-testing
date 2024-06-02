@@ -22,9 +22,11 @@ const generateNewToken = (): string => {
 
 const signUp =  (req: Request, res: Response) => {
 
+    console.log('bodycheck');
     const username = req.body.username;
     const password = req.body.password;
 
+    console.log('creating user object');
     // Add type
     const newUser = new db.User({
         username: username,
@@ -37,14 +39,11 @@ const signUp =  (req: Request, res: Response) => {
 
     // Change that the Role is not admin only i.e. including all the classes
     // Change return falses to another values...
-    newUser.save((err: any, nuser: any) => {
-        if (err) {
-            console.log('Error:');
-            console.log(err);
-            res.status(500).json({ "Error": "Error when starting saving the user!" });
-        }
-
+    console.log('saving user...');
+    newUser.save().then(nuser => {
+        console.log('roles');
         if (roles) {
+            console.log('roles: finding roles');
             db.Role.find(
                 {
                     name: { $in: roles }
@@ -56,13 +55,12 @@ const signUp =  (req: Request, res: Response) => {
                         res.status(500).json({ "Error": "Error finding the user!" });
                     }
 
+                    console.log('roles: saving roles');
                     nuser.roles = roles.map((role: any) => role._id);
-                    nuser.save((err: any) => {
-                        if (err) {
-                            console.log('Error:');
-                            console.log(err);
-                            res.status(500).json({ "Error": "Error when saving the user!" });
-                        }
+                    nuser.save().then().catch(err => {
+                        console.log('Error:');
+                        console.log(err);
+                        res.status(500).json({ "Error": "Error saving the user!" });
                     });
 
                     console.log('User successfully registered!');
@@ -70,8 +68,11 @@ const signUp =  (req: Request, res: Response) => {
                 }
             )
         }
-    })
-    
+    }).catch(error => {
+        console.log('Error:');
+        console.log(error);
+        res.status(500).json({ "Error": "Error when starting saving the user!" });
+    })    
 };
 
 const login =  (req: Request, res: Response) => {
@@ -81,50 +82,41 @@ const login =  (req: Request, res: Response) => {
 
     db.User.findOne({
         username: username,
-    })
-        .populate("roles", "-__v")
-        .exec((err: any, user: any) => {
-            if (err) {
-                console.log("Error!");
-                console.log(err);
-                res.status(500).json({ "Error": "Some error found when logging in!"});
-            }
-
-            if (!user) {
+    }).populate("roles", "-__v").exec().then(user => {
+           
+            if (!user || !user.password) {
                 console.log("User not found!");
                 res.status(401).json({ "Error": "Username or password incorrect!" });
-            }
-
-            const checkUserPassword = bcrypt.compareSync(password, user.password);
-
-            if (!checkUserPassword) {
-                console.log("Incorrect password");
-                res.status(401).json({ "Error": "Username or password incorrect!" });
-            }
-            
-            if (!process.env.COOKIETOKENSECRET) {
-                console.log("SET COOKIETOKENSECRET!");
-                res.status(500).json({ "Error": "A serverside error!" });
             } else {
-                const token = jwt.sign({ id: user.id }, process.env.COOKIETOKENSECRET, {algorithm: 'HS256', allowInsecureKeySizes: true, expiresIn: 86400,});
+                const checkUserPassword = bcrypt.compareSync(password, user.password);
 
-                const roles = [];
-                for (let i = 0; i < user.roles.length; i++) {
-                    roles.push(user.roles[i].name.toLowerCase());
+                if (!checkUserPassword) {
+                    console.log("Incorrect password");
+                    res.status(401).json({ "Error": "Username or password incorrect!" });
                 }
-
-                req.session.token = {key: token};
-
-                res.status(200).send({
-                    id: user._id,
-                    username: user.username,
-                    roles: roles,
-                    apikey: user.apikey,
-                });
+                
+                if (!process.env.COOKIETOKENSECRET) {
+                    console.log("SET COOKIETOKENSECRET!");
+                    res.status(500).json({ "Error": "A serverside error!" });
+                } else {
+                    const token = jwt.sign({ id: user.id }, process.env.COOKIETOKENSECRET, {algorithm: 'HS256', allowInsecureKeySizes: true, expiresIn: 86400,});
+    
+                    const roles = [];
+                    for (let i = 0; i < user.roles.length; i++) {
+                        roles.push(user.roles[i]);
+                    }
+    
+                    req.session.token = {key: token};
+    
+                    res.status(200).send({
+                        id: user._id,
+                        username: user.username,
+                        roles: roles,
+                        apikey: user.apikey,
+                    });
+                }
             }
-
-            
-        })
+        });
 }
 
 export { signUp, login }
