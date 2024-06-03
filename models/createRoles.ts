@@ -12,9 +12,6 @@ const connectFunction = async () => {
         process.exit(1);
     }
 }
-(async () => {
-    await connectFunction();
-});
 
 
 // Creating pre-defined roles:
@@ -41,3 +38,5 @@ const createRoles = async () => {
         console.log(e.message);
     }
 }
+
+export { connectFunction }

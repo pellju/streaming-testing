@@ -35,7 +35,7 @@ const signUp =  (req: Request, res: Response) => {
     });
 
     // Add type
-    const roles = ['admin', 'fulluser', 'user', 'limiteduser'];
+    const roles = db.ROLES;
 
     // Change that the Role is not admin only i.e. including all the classes
     // Change return falses to another values...

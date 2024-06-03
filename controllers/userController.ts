@@ -19,7 +19,6 @@ const userRegistration = (req: Request, res: Response) => {
         return res.status(400).json({ 'Error': 'Missing invitecode!'});
     } else {
         try {
-
             // Set types better:
             User.findOne({ username: username }).exec().then(user => {
                 if (user) {
