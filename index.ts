@@ -6,7 +6,14 @@ import { streamingRouter } from './routes/streamingRoutes';
 import { apiRouter } from './routes/apiRoutes';
 import { userRouter } from './routes/userRoutes';
 
-require('dotenv').config()
+// For connecting to the database:
+import { db } from './models';
+
+require('dotenv').config();
+
+(async () => {
+    await db.roleCreation();
+})();
 
 // Creating a new Express-server and allowing /stream-paths to access streams-folder (statically)
 const app: Express = express();
