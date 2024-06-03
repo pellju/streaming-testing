@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import { User } from "./user.model";
 import { Role } from "./role.model";
-import { connectFunction } from "./createRoles";
+import { roleCreation } from "./createRoles";
+import { connectToDatabase } from "./connectDatabase"
 
 mongoose.Promise = global.Promise;
 
@@ -10,7 +11,8 @@ const db = {
     User: User,
     Role: Role,
     ROLES: ["limited", "user", "fulluser", "admin"],
-    connectFunction: connectFunction,
+    roleCreation: roleCreation,
+    connectFunction: connectToDatabase,
 }
 
 export { db }
