@@ -1,69 +1,43 @@
-// The code mostly follows https://www.bezkoder.com/node-js-express-login-mongodb/ "app/server.js"
-
 import { db } from './index';
 
-db.mongoose
-    .connect(`mongodb://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DATABASE}`, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    }).then(() => {
+
+const connectFunction = async () => {
+    try {
+        await db.mongoose.connect(`mongodb://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DATABASE}`);
         console.log("Successfully connected to the database!");
-        createRoles(); // Muokkaa tämä muunlaiseksi
-    }).catch((e: any) => {
-        console.log("Error establishing MongoDB-connection!");
-        console.log(e)
-        process.exit();
-    });
+        await createRoles();
+    } catch (e: any) {
+        console.log("Error:");
+        console.log(e.message);
+        process.exit(1);
+    }
+}
+(async () => {
+    await connectFunction();
+});
+
 
 // Creating pre-defined roles:
 // Improve and set types properly
-const createRoles = () => {
+const createRoles = async () => {
+    try {
+        const roleCount = await db.Role.estimatedDocumentCount();
+        if (roleCount === 0) {
+            const roles = db.ROLES;
 
-    db.Role.estimatedDocumentCount((err: any, count: number) => {
-        if (!err && count === 0) {
-            new db.Role({
-                name: "limited"
-            }).save((err: any) => {
-                if (err) {
-                    console.log("Error found!");
-                    console.log(err);
-                } else {
-                    console.log("Added new role (limited)!");
+            for (const role of roles) {
+                try {
+                    const newRole = new db.Role({ name: role });
+                    await newRole.save();
+                    console.log('Added new role!');
+                } catch (error: any) {
+                    console.log("Error adding role");
+                    console.log(error.message);
                 }
-            })
-
-            new db.Role({
-                name: "user"
-            }).save((err: any) => {
-                if (err) {
-                    console.log("Error found!");
-                    console.log(err);
-                } else {
-                    console.log("Added new role (user)!");
-                }
-            })
-
-            new db.Role({
-                name: "fulluser"
-            }).save((err: any) => {
-                if (err) {
-                    console.log("Error found!");
-                    console.log(err);
-                } else {
-                    console.log("Added new role (fulluser)!");
-                }
-            })
-
-            new db.Role({
-                name: "admin"
-            }).save((err: any) => {
-                if (err) {
-                    console.log("Error found!");
-                    console.log(err);
-                } else {
-                    console.log("Added new role (admin)!");
-                }
-            })
+            }
         }
-    })
+    } catch (e: any) {
+        console.log('Error counting roles');
+        console.log(e.message);
+    }
 }
