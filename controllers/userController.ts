@@ -3,7 +3,7 @@ import { db } from "../models";
 import { User } from '../models/user.model';
 import { signUp, login } from '../services/userService';
 
-const userRegistration = (req: Request, res: Response) => {
+const userRegistration = async (req: Request, res: Response) => {
     const body = req.body;
     const username: string = body.username;
     const password: string = body.password;
@@ -27,7 +27,7 @@ const userRegistration = (req: Request, res: Response) => {
             });
 
             // Add registration function here
-            return signUp(req, res);
+            return await signUp(req, res);
 
         } catch (e: any) {
             console.log("Registration error!");
@@ -37,7 +37,7 @@ const userRegistration = (req: Request, res: Response) => {
     }
 }
 
-const userLogin = (req: Request, res: Response) => {
+const userLogin = async (req: Request, res: Response) => {
     const body = req.body;
     const username: string = body.username;
     const password: string = body.password;

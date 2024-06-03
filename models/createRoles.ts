@@ -1,7 +1,7 @@
 import { db } from './index';
 
 
-const connectFunction = async () => {
+const roleCreation = async () => {
     try {
         await db.mongoose.connect(`mongodb://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DATABASE}`);
         console.log("Successfully connected to the database!");
@@ -39,4 +39,4 @@ const createRoles = async () => {
     }
 }
 
-export { connectFunction }
+export { roleCreation }

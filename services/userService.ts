@@ -20,62 +20,57 @@ const generateNewToken = (): string => {
     return randomBytes(48).toString('hex');
 }
 
-const signUp =  (req: Request, res: Response) => {
+const signUp = async (req: Request, res: Response) => {
 
     console.log('bodycheck');
     const username = req.body.username;
     const password = req.body.password;
 
-    console.log('creating user object');
-    // Add type
-    const newUser = new db.User({
-        username: username,
-        password: bcrypt.hashSync(password, 10),
-        apikey: generateNewToken()
-    });
+    try {
+        console.log('creating user object');
+        // Add type
+        const newUser = new db.User({
+            username: username,
+            password: bcrypt.hashSync(password, 10),
+            apikey: generateNewToken()
+        });
 
-    // Add type
-    const roles = db.ROLES;
+        // Add type
+        const roles = db.ROLES;
 
-    // Change that the Role is not admin only i.e. including all the classes
-    // Change return falses to another values...
-    console.log('saving user...');
-    newUser.save().then(nuser => {
+        // Change that the Role is not admin only i.e. including all the classes
+        // Change return falses to another values...
+        console.log('saving user...');
+        const savedUser = await newUser.save();
+
         console.log('roles');
         if (roles) {
             console.log('roles: finding roles');
-            db.Role.find(
-                {
+            try {
+                const findingRoles = await db.Role.find({
                     name: { $in: roles }
-                },
-                (err: any, roles: any) => {
-                    if (err) {
-                        console.log('Error:');
-                        console.log(err);
-                        res.status(500).json({ "Error": "Error finding the user!" });
-                    }
+                }).exec();
+                
+                console.log('roles: saving roles');
+                savedUser.roles = findingRoles.map((role: any) => role._id);
+                await savedUser.save();
+                console.log('User successfully registered!');
+                res.status(201).json({ message: 'User successfully registered!' });
 
-                    console.log('roles: saving roles');
-                    nuser.roles = roles.map((role: any) => role._id);
-                    nuser.save().then().catch(err => {
-                        console.log('Error:');
-                        console.log(err);
-                        res.status(500).json({ "Error": "Error saving the user!" });
-                    });
-
-                    console.log('User successfully registered!');
-                    return true;
-                }
-            )
+            } catch (er: any) {
+                console.log("Error");
+                console.log(er.message);
+                res.status(500).json({ "Error": "Error finding the user!" });
+            }
         }
-    }).catch(error => {
-        console.log('Error:');
-        console.log(error);
+    } catch (e: any) {
+        console.log("Error");
+        console.log(e.message);
         res.status(500).json({ "Error": "Error when starting saving the user!" });
-    })    
+    }    
 };
 
-const login =  (req: Request, res: Response) => {
+const login = async (req: Request, res: Response) => {
 
     const username = req.body.username;
     const password = req.body.password;
