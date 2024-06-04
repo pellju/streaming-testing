@@ -123,8 +123,14 @@ const login = async (req: AuthRequest, res: Response) => {
 
 const logout = async(req: AuthRequest, res: Response) => {
     try {
-        req.session.token = { key: null };
-        return res.send({ 'Information': 'Logout successful' });
+
+        if (req.session.token) {
+            req.session.token = { key: null };
+            return res.send({ 'Information': 'Logout successful' });
+        } else {
+            return res.send({ 'Information': 'Logout failed: not logged in.' });
+        }
+        
     } catch (e: any) {
         console.log("Error logging out!");
         console.log(e.message);
