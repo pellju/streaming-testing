@@ -1,7 +1,7 @@
 import {Request, Response } from 'express';
 import { db } from "../models";
 import { User } from '../models/user.model';
-import { signUp, login } from '../services/userService';
+import { signUp, login, logout } from '../services/userService';
 
 const userRegistration = async (req: Request, res: Response) => {
     const body = req.body;
@@ -66,4 +66,14 @@ const userLogin = async (req: Request, res: Response) => {
     }
 }
 
-export { userRegistration, userLogin }
+const userLogout = async (req: Request, res: Response) => {
+    try {
+        return await logout(req,res);
+    } catch (e: any) {
+        console.log("Logout error!");
+        console.log(e.message);
+        res.status(500).json({ 'Error': 'Unknown error!'});
+    }
+}
+
+export { userRegistration, userLogin, userLogout }

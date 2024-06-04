@@ -121,4 +121,15 @@ const login = async (req: AuthRequest, res: Response) => {
     }
 }
 
-export { signUp, login }
+const logout = async(req: AuthRequest, res: Response) => {
+    try {
+        req.session.token = { key: null };
+        return res.send({ 'Information': 'Logout successful' });
+    } catch (e: any) {
+        console.log("Error logging out!");
+        console.log(e.message);
+        return res.status(500).json({ "Error": "Error logging out!" });
+    }
+}
+
+export { signUp, login, logout }
