@@ -19,15 +19,15 @@ const userRegistration = async (req: Request, res: Response) => {
         return res.status(400).json({ 'Error': 'Missing invitecode!'});
     } else {
         try {
-            // Set types better:
-            User.findOne({ username: username }).exec().then(user => {
-                if (user) {
-                    res.status(400).json({ 'Error': 'User with given username exists!' });
-                }
-            });
 
-            // Add registration function here
-            return await signUp(req, res);
+
+            const findingUser = await User.findOne({ username: username });
+            if (findingUser) {
+                res.status(400).json({ 'Error': 'User with given username exists!' });
+            } else {
+                return await signUp(req, res);
+            }
+            
 
         } catch (e: any) {
             console.log("Registration error!");
@@ -51,16 +51,12 @@ const userLogin = async (req: Request, res: Response) => {
     } else {
         try {
 
-            // Set types better:
-            User.findOne({ username: username }).exec().then(user => {
-                if (user) {
-                    login(req, res);
-                } else {
-                    res.status(400).json({ 'Error': 'Username not found' });
-                }
-            })
-            
-            return login(req, res);
+            const findingUser = await User.findOne({ username: username });
+            if (findingUser) {
+                return await login(req, res);
+            } else {
+                res.status(400).json({ 'Error': 'User with given username does not exist!' });
+            }
             
         } catch (e: any) {
             console.log("Registration error!");

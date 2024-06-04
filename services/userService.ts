@@ -7,14 +7,18 @@ import { User } from "../models/user.model";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { randomBytes } from "crypto";
-import { Role } from "../models/role.model";
 import {Request, Response } from 'express';
 
 declare module 'express-session' {
-    export interface SessionData {
-        token: { [key: string]: any };
+    interface SessionData {
+        token?: { [key: string]: any };
     }
 };
+
+interface AuthRequest extends Request {
+    user?: { userId: string };
+}
+
 
 const generateNewToken = (): string => {
     return randomBytes(48).toString('hex');
@@ -70,48 +74,51 @@ const signUp = async (req: Request, res: Response) => {
     }    
 };
 
-const login = async (req: Request, res: Response) => {
+const login = async (req: AuthRequest, res: Response) => {
 
     const username = req.body.username;
     const password = req.body.password;
 
-    db.User.findOne({
-        username: username,
-    }).populate("roles", "-__v").exec().then(user => {
-           
-            if (!user || !user.password) {
-                console.log("User not found!");
+    try {
+        const existingUser = await db.User.findOne({ username: username }).populate("roles", "-__v");
+        
+        if (!existingUser || !existingUser.password) {
+            res.status(401).json({ "Error": "Username or password incorrect!" });
+        } else {
+            const checkUserPassword = bcrypt.compareSync(password, existingUser?.password);
+
+            if (!checkUserPassword) {
                 res.status(401).json({ "Error": "Username or password incorrect!" });
             } else {
-                const checkUserPassword = bcrypt.compareSync(password, user.password);
 
-                if (!checkUserPassword) {
-                    console.log("Incorrect password");
-                    res.status(401).json({ "Error": "Username or password incorrect!" });
-                }
-                
                 if (!process.env.COOKIETOKENSECRET) {
                     console.log("SET COOKIETOKENSECRET!");
                     res.status(500).json({ "Error": "A serverside error!" });
                 } else {
-                    const token = jwt.sign({ id: user.id }, process.env.COOKIETOKENSECRET, {algorithm: 'HS256', allowInsecureKeySizes: true, expiresIn: 86400,});
-    
+                    const token = jwt.sign({ id: existingUser.id }, process.env.COOKIETOKENSECRET, {algorithm: 'HS256', allowInsecureKeySizes: true, expiresIn: 86400,});
+                    console.log(token);
+                    req.session.token = { key: token };
+
                     const roles = [];
-                    for (let i = 0; i < user.roles.length; i++) {
-                        roles.push(user.roles[i]);
+                    for (let i = 0; i < existingUser.roles.length; i++) {
+                        roles.push(existingUser.roles[i]);
                     }
     
-                    req.session.token = {key: token};
-    
                     res.status(200).send({
-                        id: user._id,
-                        username: user.username,
+                        id: existingUser._id,
+                        username: existingUser.username,
                         roles: roles,
-                        apikey: user.apikey,
+                        apikey: existingUser.apikey,
                     });
                 }
             }
-        });
+        }
+        
+    } catch (e: any) {
+        console.log("Error logging in!");
+        console.log(e.message);
+        return res.status(500).json({ "Error": "Error logging in!" });
+    }
 }
 
 export { signUp, login }

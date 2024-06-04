@@ -16,14 +16,14 @@ interface AuthRequest extends Request {
 
 declare module 'express-session' {
     export interface SessionData {
-        token: { [key: string]: any };
+        token?: { [key: string]: any };
     }
 };
 
 const verifyingToken = (req: AuthRequest, res: Response, next: NextFunction) => {
-    let token: any = req.session.token;
+    let token: any = req.session.token?.key;
 
-    if (token) {
+    if (!token) {
         res.status(403).json({ 'Error': 'No token provided!' })
     }
 

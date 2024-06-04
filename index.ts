@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import path from 'path';
+import session from 'express-session';
 
 import { apiCheckerMiddleware } from './middlewares/streamingMiddleware';
 import { streamingRouter } from './routes/streamingRoutes';
@@ -18,6 +19,20 @@ require('dotenv').config();
 // Creating a new Express-server and allowing /stream-paths to access streams-folder (statically)
 const app: Express = express();
 app.use(express.json());
+
+if (!process.env.COOKIETOKENSECRET) {
+    console.log("Set token!");
+    process.exit(1);
+}
+
+app.use(session({
+    secret: process.env.COOKIETOKENSECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        secure: false
+    }
+}));
 
 app.use('/secretstream/:apikey', apiCheckerMiddleware, express.static(path.join(__dirname, 'streams')));
 app.use('/stream', express.static(path.join(__dirname, 'streams')));
