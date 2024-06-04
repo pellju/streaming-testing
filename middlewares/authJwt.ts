@@ -36,96 +36,81 @@ const verifyingToken = (req: AuthRequest, res: Response, next: NextFunction) => 
     });
 };
 
-const isAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
+const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
-    if (!req.user) {
+    if (!req.user || !req.user.userId) {
         res.status(400).json({ 'Error': 'Token missing' });
     } else {
-        db.User.findById(req.user.userId).exec((err: any, user: any) => {
-            if (err) {
-                res.status(500).json({ 'Error': err });
+        try {
+            const findUserById = await db.User.findById(req.user.userId);
+
+            const userRoles = await db.Role.find({ _id: { in: findUserById?.roles} });
+
+            for (let i = 0; i < userRoles.length; i++) {
+                if (userRoles[i].name === "admin") {
+                    next();
+                }
             }
 
-            db.Role.find({
-                _id: { in: user.roles },
-            }, (role_err: any, roles: any) => {
-                if (role_err) {
-                    res.status(500).json({ 'Error': role_err });
-                }
-                
-                for (let i = 0; i < roles.length; i++) {
-                    if (roles[i].name === "admin") {
-                        next();
-                        return; // Improve
-                    }
-                }
-                
-                res.status(403).json({ 'Error': 'Forbidden. Admin-role required!' });
-                return;
-            })
-        });
+            res.status(403).json({ 'Error': 'Forbidden. Admin-role required!' });
+
+        } catch (e: any) {
+            console.log("Error!");
+            console.log(e.message);
+            res.status(500).json({ 'Error': e.message });
+        }
     }
 };
 
-const isFulluser = (req: AuthRequest, res: Response, next: NextFunction) => {
+const isFulluser = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
     if (!req.user) {
         res.status(400).json({ 'Error': 'Token missing' });
     } else {
-        db.User.findById(req.user.userId).exec((err: any, user: any) => {
-            if (err) {
-                res.status(500).json({ 'Error': err });
+        try {
+            const findUserById = await db.User.findById(req.user.userId);
+
+            const userRoles = await db.Role.find({ _id: { in: findUserById?.roles} });
+
+            for (let i = 0; i < userRoles.length; i++) {
+                if (userRoles[i].name === "fulluser") {
+                    next();
+                }
             }
 
-            db.Role.find({
-                _id: { in: user.roles },
-            }, (role_err: any, roles: any) => {
-                if (role_err) {
-                    res.status(500).json({ 'Error': role_err });
-                }
-                
-                for (let i = 0; i < roles.length; i++) {
-                    if (roles[i].name === "fulluser") {
-                        next();
-                        return; // Improve
-                    }
-                }
-                
-                res.status(403).json({ 'Error': 'Forbidden. Fulluser-role required!' });
-                return;
-            })
-        });
+            res.status(403).json({ 'Error': 'Forbidden. Fulluser-role required!' });
+
+        } catch (e: any) {
+            console.log("Error!");
+            console.log(e.message);
+            res.status(500).json({ 'Error': e.message });
+        }
     }
 };
 
-const isUser = (req: AuthRequest, res: Response, next: NextFunction) => {
+const isUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
     if (!req.user) {
         res.status(400).json({ 'Error': 'Token missing' });
     } else {
-        db.User.findById(req.user.userId).exec((err: any, user: any) => {
-            if (err) {
-                res.status(500).json({ 'Error': err });
+        try {
+            const findUserById = await db.User.findById(req.user.userId);
+
+            const userRoles = await db.Role.find({ _id: { in: findUserById?.roles} });
+
+            for (let i = 0; i < userRoles.length; i++) {
+                if (userRoles[i].name === "fulluser") {
+                    next();
+                }
             }
 
-            db.Role.find({
-                _id: { in: user.roles },
-            }, (role_err: any, roles: any) => {
-                if (role_err) {
-                    res.status(500).json({ 'Error': role_err });
-                }
-                
-                for (let i = 0; i < roles.length; i++) {
-                    if (roles[i].name === "user") {
-                        next();
-                        return; // Improve
-                    }
-                }
-                
-                res.status(403).json({ 'Error': 'Forbidden. User-role required!' });
-                return;
-            })
-        });
+            res.status(403).json({ 'Error': 'Forbidden. User-role required!' });
+
+        } catch (e: any) {
+            console.log("Error!");
+            console.log(e.message);
+            res.status(500).json({ 'Error': e.message });
+        }
     }
 };
 
