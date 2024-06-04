@@ -76,4 +76,8 @@ const userLogout = async (req: Request, res: Response) => {
     }
 }
 
-export { userRegistration, userLogin, userLogout }
+const isAdminTest = async (req: Request, res: Response) => {
+    res.send({"Information": "You are an admin!" });
+}
+
+export { userRegistration, userLogin, userLogout, isAdminTest }

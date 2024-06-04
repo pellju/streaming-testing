@@ -15,10 +15,6 @@ declare module 'express-session' {
     }
 };
 
-interface AuthRequest extends Request {
-    user?: { userId: string };
-}
-
 
 const generateNewToken = (): string => {
     return randomBytes(48).toString('hex');
@@ -74,7 +70,7 @@ const signUp = async (req: Request, res: Response) => {
     }    
 };
 
-const login = async (req: AuthRequest, res: Response) => {
+const login = async (req: Request, res: Response) => {
 
     const username = req.body.username;
     const password = req.body.password;
@@ -95,20 +91,20 @@ const login = async (req: AuthRequest, res: Response) => {
                     console.log("SET COOKIETOKENSECRET!");
                     res.status(500).json({ "Error": "A serverside error!" });
                 } else {
-                    const token = jwt.sign({ id: existingUser.id }, process.env.COOKIETOKENSECRET, {algorithm: 'HS256', allowInsecureKeySizes: true, expiresIn: 86400,});
-                    console.log(token);
+                    const token = jwt.sign({ id: existingUser.id }, process.env.COOKIETOKENSECRET, {algorithm: 'HS256', allowInsecureKeySizes: true, expiresIn: 3600,});
                     req.session.token = { key: token };
 
                     const roles = [];
                     for (let i = 0; i < existingUser.roles.length; i++) {
                         roles.push(existingUser.roles[i]);
                     }
-    
+
                     res.status(200).send({
                         id: existingUser._id,
                         username: existingUser.username,
                         roles: roles,
                         apikey: existingUser.apikey,
+                        token: token
                     });
                 }
             }
@@ -121,7 +117,7 @@ const login = async (req: AuthRequest, res: Response) => {
     }
 }
 
-const logout = async(req: AuthRequest, res: Response) => {
+const logout = async(req: Request, res: Response) => {
     try {
 
         if (req.session.token) {
