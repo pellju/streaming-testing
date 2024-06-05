@@ -86,22 +86,39 @@ const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
 const isFulluser = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
-    if (!req.user) {
-        res.status(400).json({ 'Error': 'Token missing' });
+    if (!req.headers || !req.headers.token) {
+        return res.status(400).json({ 'Error': 'Token missing' });
     } else {
         try {
-            const findUserById = await db.User.findById(req.user.userId);
+            const token = req.headers.token.toString();
+            let user: userObjectContainingId = {id: null};
+            jwt.verify(token, JWT_SECRET, (err: any, decoded: any) => {
 
-            const userRoles = await db.Role.find({ _id: { in: findUserById?.roles} });
-
-            for (let i = 0; i < userRoles.length; i++) {
-                if (userRoles[i].name === "fulluser") {
-                    next();
+                if (err) {
+                    return res.status(401).json({ 'Error': 'Unauthorized access!' });
                 }
+                user = decoded as { id: string };
+            });
+
+            if (!user) {
+                return res.status(500).json({ "Error": "Error with the authorization "});
+            } else {
+                const userId = user.id;
+                const findUserById = await db.User.findById(userId);
+                const roleIds = findUserById?.roles.map(role => role._id.toString());
+
+                if (roleIds) {
+                    for (let i: number =0; i < roleIds?.length; i++) {
+                        const role = await db.Role.findById(roleIds[i]);
+                        if (role?.name === "fulluser") {
+                            next();
+                            return ;
+                        }
+                    }
+                }
+
+                return res.status(403).json({ 'Error': 'Forbidden. Fulluser-role required!' });
             }
-
-            res.status(403).json({ 'Error': 'Forbidden. Fulluser-role required!' });
-
         } catch (e: any) {
             console.log("Error!");
             console.log(e.message);
@@ -112,22 +129,39 @@ const isFulluser = async (req: AuthRequest, res: Response, next: NextFunction) =
 
 const isUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
-    if (!req.user) {
-        res.status(400).json({ 'Error': 'Token missing' });
+    if (!req.headers || !req.headers.token) {
+        return res.status(400).json({ 'Error': 'Token missing' });
     } else {
         try {
-            const findUserById = await db.User.findById(req.user.userId);
+            const token = req.headers.token.toString();
+            let user: userObjectContainingId = {id: null};
+            jwt.verify(token, JWT_SECRET, (err: any, decoded: any) => {
 
-            const userRoles = await db.Role.find({ _id: { in: findUserById?.roles} });
-
-            for (let i = 0; i < userRoles.length; i++) {
-                if (userRoles[i].name === "fulluser") {
-                    next();
+                if (err) {
+                    return res.status(401).json({ 'Error': 'Unauthorized access!' });
                 }
+                user = decoded as { id: string };
+            });
+
+            if (!user) {
+                return res.status(500).json({ "Error": "Error with the authorization "});
+            } else {
+                const userId = user.id;
+                const findUserById = await db.User.findById(userId);
+                const roleIds = findUserById?.roles.map(role => role._id.toString());
+
+                if (roleIds) {
+                    for (let i: number =0; i < roleIds?.length; i++) {
+                        const role = await db.Role.findById(roleIds[i]);
+                        if (role?.name === "user") {
+                            next();
+                            return ;
+                        }
+                    }
+                }
+
+                return res.status(403).json({ 'Error': 'Forbidden. User-role required!' });
             }
-
-            res.status(403).json({ 'Error': 'Forbidden. User-role required!' });
-
         } catch (e: any) {
             console.log("Error!");
             console.log(e.message);
