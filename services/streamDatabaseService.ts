@@ -1,5 +1,36 @@
 import { db } from "../models";
 
+const findAllStreams = async() => {
+    const streams = await db.Stream.find();
+
+    return streams;
+}
+
+const findStreamsUserCanSee = async(roles: string[]) => {
+
+    try {
+
+        const validRoles = db.ROLES;
+
+        for (let i=0; i<roles.length; i++) {
+            if (!validRoles.includes(roles[i])) {
+                throw new Error ("Incorrect role given!");
+            }
+        }
+
+        const validStreams = await db.Stream.find({
+            requiredLevel: { $in: roles }
+        });
+
+        return validStreams;
+
+    } catch (e: any) {
+        console.log("Error with listing streams from database!");
+        console.log(e.message);
+        return null;
+    } 
+}
+
 // Returning streaming list
 const createStreamDatabaseObject = async(name: string, url: string, category: string, permissionRole: string) => {
 
@@ -28,6 +59,8 @@ const createStreamDatabaseObject = async(name: string, url: string, category: st
 
         console.log("newStreamObject saved");
 
+        return await findAllStreams();
+
     } catch (e: any) {
         console.log("Error with inputting Stream to database!");
         console.log(e.message);
@@ -35,5 +68,17 @@ const createStreamDatabaseObject = async(name: string, url: string, category: st
     }
 }
 
+const removeStreamDatabaseObject = async(name: string) => {
+    try {
 
-export { createStreamDatabaseObject }
+        await db.Stream.deleteOne({ name: name });
+        return await findAllStreams();
+
+    } catch (e: any) {
+        console.log("Error with removing Stream from database!");
+        console.log(e.message);
+        return null;
+    }
+}
+
+export { createStreamDatabaseObject, removeStreamDatabaseObject, findStreamsUserCanSee }
