@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { User } from "./user.model";
 import { Role } from "./role.model";
+import { Stream } from "./stream.model";
 import { roleCreation } from "./createRoles";
 
 mongoose.Promise = global.Promise;
@@ -10,7 +11,8 @@ const db = {
     User: User,
     Role: Role,
     ROLES: ["limited", "user", "fulluser", "admin"],
-    roleCreation: roleCreation
+    roleCreation: roleCreation,
+    Stream: Stream,
 }
 
 export { db }

@@ -3,16 +3,19 @@ import { streams, openingStream, deleteStream } from '../services/ffmpegService'
 
 const addStream = (req: Request, res: Response) => {
     const body = req.body;
-    if (body === undefined || body.input === undefined || body.name === undefined) {
+    if (body === undefined || body.input === undefined || body.name === undefined || body.category === undefined || body.permission === undefined) {
         res.status(400).json({ 'Error': 'Incorrect body'});
     } else {
         // ToDo: Check that input is valid URL!
         // ToDo: Add metadatainfo
         const input = body.input;
         const name = body.name;
+        const category = body.category;
+        const permission = body.permission;
 
         // Checking that name is unique (result is -1 if does not exist):
-        if (streams.findIndex(steram => steram.streamname === name) > -1) {
+        // (There should not be database entry either then)
+        if (streams.findIndex(stream => stream.streamname === name) > -1) {
             // ToDo: Improve error management and notify user that the stream with given name already exists
             res.status(400).json({ 'Error': 'Stream with given name already exists!' });
         } else {
@@ -20,6 +23,8 @@ const addStream = (req: Request, res: Response) => {
             if (!openingStream(input, name)) {
                 res.status(400).json({ 'Error': 'There was an error opening the stream!' });
             } else {
+                // Create a database entry here
+                
                 res.status(201).send({ 'Information': 'Successfully created new stream!' });
             }
         }
