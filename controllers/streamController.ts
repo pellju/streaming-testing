@@ -46,8 +46,8 @@ const removeStream = async (req: Request, res: Response) => {
     } else {
         try {
             if (deleteStream(name)) {
-                return await removeStreamDatabaseObject(name);
-                //res.send({ "Information": "Stream deleted!" });
+                const existingStreams = await removeStreamDatabaseObject(name);
+                res.send({ "Information": "Stream deleted!", "Streams": existingStreams });
             } else {
                 res.status(400).json({ "Error": "No such stream name!" });
             }
