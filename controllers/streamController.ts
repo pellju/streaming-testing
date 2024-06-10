@@ -1,51 +1,65 @@
 import {Request, Response } from 'express';
 import { streams, openingStream, deleteStream } from '../services/ffmpegService';
+import { removeStreamDatabaseObject, createStreamDatabaseObject, findStreamsUserCanSee, findAllStreams } from '../services/streamDatabaseService';
 
-const addStream = (req: Request, res: Response) => {
+const addStream = async (req: Request, res: Response) => {
     const body = req.body;
     if (body === undefined || body.input === undefined || body.name === undefined || body.category === undefined || body.permission === undefined) {
         res.status(400).json({ 'Error': 'Incorrect body'});
     } else {
-        // ToDo: Check that input is valid URL!
-        // ToDo: Add metadatainfo
-        const input = body.input;
-        const name = body.name;
-        const category = body.category;
-        const permission = body.permission;
+        try {
+            // ToDo: Check that input is valid URL!
+            // ToDo: Add metadatainfo
+            const input = body.input;
+            const name = body.name;
+            const category = body.category;
+            const permission = body.permission;
 
-        // Checking that name is unique (result is -1 if does not exist):
-        // (There should not be database entry either then)
-        if (streams.findIndex(stream => stream.streamname === name) > -1) {
-            // ToDo: Improve error management and notify user that the stream with given name already exists
-            res.status(400).json({ 'Error': 'Stream with given name already exists!' });
-        } else {
-
-            if (!openingStream(input, name)) {
-                res.status(400).json({ 'Error': 'There was an error opening the stream!' });
+            // Checking that name is unique (result is -1 if does not exist):
+            // (There should not be database entry either then)
+            if (streams.findIndex(stream => stream.streamname === name) > -1) {
+                // ToDo: Improve error management and notify user that the stream with given name already exists
+                res.status(400).json({ 'Error': 'Stream with given name already exists!' });
             } else {
-                // Create a database entry here
-                
-                res.status(201).send({ 'Information': 'Successfully created new stream!' });
+
+                if (!openingStream(input, name)) {
+                    res.status(400).json({ 'Error': 'There was an error opening the stream!' });
+                } else {
+                    // Create a database entry here
+                    const streams = await createStreamDatabaseObject(name, input, category, permission);
+                    res.status(201).send({ 'Information': 'Successfully created new stream!', 'streams': streams });
+                }
             }
+        } catch (e: any) {
+            console.log("Error with adding stream to database!");
+            console.log(e.message);
+            res.status(500).json({ 'Error': 'Something wrong with adding the stream from database!'});
         }
     }
 };
 
-const removeStream = (req: Request, res: Response) => {
+const removeStream = async (req: Request, res: Response) => {
     // ToDo: Sanitizing
     const name: string = req.params.name;
     if (req === undefined || name === undefined) {
         res.status(400).json({ "Error": "Stream name not defined!" });
     } else {
-        if (deleteStream(name)) {
-            res.send({ "Information": "Stream deleted!" });
-        } else {
-            res.status(400).json({ "Error": "No such stream name!" });
+        try {
+            if (deleteStream(name)) {
+                return await removeStreamDatabaseObject(name);
+                //res.send({ "Information": "Stream deleted!" });
+            } else {
+                res.status(400).json({ "Error": "No such stream name!" });
+            }
+        } catch (e: any) {
+            console.log("Error with removing stream to database!");
+            console.log(e.message);
+            res.status(500).json({ 'Error': 'Something wrong with removing the stream from database!'});
         }
     }
 };
 
-const listStreamNames = (req: Request, res: Response) => {
+const listStreamNames = async (req: Request, res: Response) => {
     const streamList: string[] = streams.map(item => item.streamname);
     res.send({ "items": streamList });
 };

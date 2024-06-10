@@ -81,4 +81,4 @@ const removeStreamDatabaseObject = async(name: string) => {
     }
 }
 
-export { createStreamDatabaseObject, removeStreamDatabaseObject, findStreamsUserCanSee }
+export { createStreamDatabaseObject, removeStreamDatabaseObject, findStreamsUserCanSee, findAllStreams }
