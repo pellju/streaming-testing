@@ -16,11 +16,11 @@ const userRegistration = async (req: Request, res: Response) => {
     } else if (password === undefined) {
         return res.status(400).json({ 'Error': 'Missing password!'});
     } else if (invitecode === undefined) {
+
+        // Checking if the invite code is valid, i.e. creating a helper function for checking if the key is in the database
         return res.status(400).json({ 'Error': 'Missing invitecode!'});
     } else {
         try {
-
-
             const findingUser = await User.findOne({ username: username });
             if (findingUser) {
                 res.status(400).json({ 'Error': 'User with given username exists!' });
