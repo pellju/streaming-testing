@@ -60,8 +60,14 @@ const removeStream = async (req: Request, res: Response) => {
 };
 
 const listStreamNames = async (req: Request, res: Response) => {
-    const streamList: string[] = streams.map(item => item.streamname);
-    res.send({ "items": streamList });
+    const streamsFromDatabase = await findAllStreams();
+
+    if (streamsFromDatabase.length === 0 || !streamsFromDatabase) {
+        res.send({ "items": [] });
+    } else {
+        const streamList = streamsFromDatabase.map(item => item.name);
+        res.send({ "items": streamList });
+    }
 };
 
 export { listStreamNames, addStream, removeStream }
