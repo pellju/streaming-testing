@@ -2,6 +2,7 @@ import {Request, Response } from 'express';
 import { db } from "../models";
 import { User } from '../models/user.model';
 import { signUp, login, logout } from '../services/userService';
+import { createNewInvite, listInvites, removeInvite } from '../services/inviteHandling';
 
 const userRegistration = async (req: Request, res: Response) => {
     const body = req.body;
@@ -16,8 +17,6 @@ const userRegistration = async (req: Request, res: Response) => {
     } else if (password === undefined) {
         return res.status(400).json({ 'Error': 'Missing password!'});
     } else if (invitecode === undefined) {
-
-        // Checking if the invite code is valid, i.e. creating a helper function for checking if the key is in the database
         return res.status(400).json({ 'Error': 'Missing invitecode!'});
     } else {
         try {
@@ -25,7 +24,13 @@ const userRegistration = async (req: Request, res: Response) => {
             if (findingUser) {
                 res.status(400).json({ 'Error': 'User with given username exists!' });
             } else {
-                return await signUp(req, res);
+                
+                const inviteCheck = await removeInvite(invitecode);
+                if (!inviteCheck) {
+                    res.status(400).json({ 'Error': 'Invite incorrect!' });
+                } else {
+                    return await signUp(req, res);
+                }
             }
             
 
@@ -80,4 +85,20 @@ const isAdminTest = async (req: Request, res: Response) => {
     res.send({"Information": "You are an admin!" });
 }
 
-export { userRegistration, userLogin, userLogout, isAdminTest }
+const getInvites = async(req: Request, res: Response) => {
+    const invites = await listInvites();
+    res.send({"Invitecodes": invites });
+}
+
+const newInviteEndpoint = async(req: Request, res: Response) => {
+    const inviteCheck = await createNewInvite();
+    if (inviteCheck) {
+        const allInvites = await listInvites();
+        res.send({ "Invitecodes": allInvites });
+    } else {
+        console.log("An issue creating a new invite!");
+        res.status(500).json({ 'Error': 'Error creating a new invite!'}); 
+    }
+}
+
+export { userRegistration, userLogin, userLogout, isAdminTest, getInvites, newInviteEndpoint }
