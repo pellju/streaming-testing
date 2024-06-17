@@ -10,6 +10,13 @@ const addStream = (req: Request, res: Response) => {
         // ToDo: Add metadatainfo
         const input = body.input;
         const name = body.name;
+        const disableTlsCheck = body.disableTlsCheck;
+
+        let checkTls: boolean = false;
+        if (disableTlsCheck === undefined || !disableTlsCheck) {
+            checkTls = true;
+        } 
+
 
         // Checking that name is unique (result is -1 if does not exist):
         if (streams.findIndex(steram => steram.streamname === name) > -1) {
@@ -17,7 +24,7 @@ const addStream = (req: Request, res: Response) => {
             res.status(400).json({ 'Error': 'Stream with given name already exists!' });
         } else {
 
-            if (!openingStream(input, name)) {
+            if (!openingStream(input, name, checkTls)) {
                 res.status(400).json({ 'Error': 'There was an error opening the stream!' });
             } else {
                 res.status(201).send({ 'Information': 'Successfully created new stream!' });
