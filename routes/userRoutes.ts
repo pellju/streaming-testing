@@ -17,6 +17,8 @@ userRouter.post('/login', userLogin);
 
 userRouter.get('/admintest', isAdmin, isAdminTest);
 
+// Development IDs
+
 userRouter.post('/dev/users/newinvite', newInviteEndpoint);
 
 userRouter.get('/dev/users/getInvites', getInvites);

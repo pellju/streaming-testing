@@ -42,6 +42,7 @@ const signUp = async (req: Request, res: Response) => {
         // Change return falses to another values...
         console.log('saving user...');
         const savedUser = await newUser.save();
+        const numberOfUsers = await User.countDocuments({});
 
         console.log('roles');
         if (roles) {
@@ -52,7 +53,15 @@ const signUp = async (req: Request, res: Response) => {
                 }).exec();
                 
                 console.log('roles: saving roles');
-                savedUser.roles = findingRoles.map((role: any) => role._id);
+
+                // If the user is the first user in the system
+                if (numberOfUsers === 0) {
+                    savedUser.roles = findingRoles.map((role: any) => role._id);
+                } else {
+                    // Hardcoded, create a better solution
+                    savedUser.roles = findingRoles.filter((role: any) => role.name === 'limited').map((role: any) => role._id);
+                }
+                
                 await savedUser.save();
                 console.log('User successfully registered!');
                 res.status(201).json({ message: 'User successfully registered!' });

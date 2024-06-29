@@ -24,9 +24,9 @@ const userRegistration = async (req: Request, res: Response) => {
             if (findingUser) {
                 res.status(400).json({ 'Error': 'User with given username exists!' });
             } else {
-                
+                const numberOfUsers = await User.countDocuments({});
                 const inviteCheck = await removeInvite(invitecode);
-                if (!inviteCheck) {
+                if (!inviteCheck && numberOfUsers > 0) {
                     res.status(400).json({ 'Error': 'Invite incorrect!' });
                 } else {
                     return await signUp(req, res);
