@@ -101,4 +101,18 @@ const newInviteEndpoint = async(req: Request, res: Response) => {
     }
 }
 
+// Only admin can do this by default
+const userEdit = async(req: Request, res: Response) => {
+
+    // Changeable things?
+    // Password
+    // Adding and removing classes
+}
+
+
+// Only admin can do this by default
+const userRemoval = async(req: Request, res: Response) => {
+
+}
+
 export { userRegistration, userLogin, userLogout, isAdminTest, getInvites, newInviteEndpoint }

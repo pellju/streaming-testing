@@ -17,14 +17,23 @@ userRouter.post('/login', userLogin);
 
 userRouter.get('/admintest', isAdmin, isAdminTest);
 
-// Development IDs
+userRouter.post('/users/newinvite', isAdmin, newInviteEndpoint);
+
+userRouter.get('/users/getInvites', isAdmin, getInvites);
+
+userRouter.post('/users/edit/:id', isAdmin, );
+
+userRouter.delete('/users/delete/:id', isAdmin, );
+
+// Development IDs endpoints
+// Disable before taken into public
 
 userRouter.post('/dev/users/newinvite', newInviteEndpoint);
 
 userRouter.get('/dev/users/getInvites', getInvites);
 
-userRouter.post('/users/newinvite', isAdmin, newInviteEndpoint);
+userRouter.post('/users/edit/:id',  );
 
-userRouter.get('/users/getInvites', isAdmin, getInvites);
+userRouter.delete('/users/delete/:id',  );
 
 export { userRouter }
