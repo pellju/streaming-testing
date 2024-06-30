@@ -112,7 +112,19 @@ const userEdit = async(req: Request, res: Response) => {
 
 // Only admin can do this by default
 const userRemoval = async(req: Request, res: Response) => {
+    const userId = req.params.id;
 
+    if (!userId) {
+        return res.json({ 'Error': 'UserID missing!'});
+    }
+
+    try {
+        const removeUser = await User.findByIdAndDelete(userId);
+        return res.json({ 'Information': `Removed ${removeUser} from the database!` });
+    } catch (e: any) {
+        console.log(e.message);
+        return res.json({ 'Error': 'Unable to remove the given userId!'});
+    }
 }
 
-export { userRegistration, userLogin, userLogout, isAdminTest, getInvites, newInviteEndpoint }
+export { userRegistration, userLogin, userLogout, isAdminTest, getInvites, newInviteEndpoint, userRemoval, userEdit }
