@@ -1,7 +1,7 @@
 import {Request, Response } from 'express';
 import { db } from "../models";
 import { User } from '../models/user.model';
-import { signUp, login, logout } from '../services/userService';
+import { signUp, login, logout, editUser } from '../services/userService';
 import { createNewInvite, listInvites, removeInvite } from '../services/inviteHandling';
 
 const userRegistration = async (req: Request, res: Response) => {
@@ -134,7 +134,7 @@ const userEdit = async(req: Request, res: Response) => {
 
         try {
             // Add a function used for the service
-            
+            await editUser(req, res);
 
         } catch (e: any) {
             console.log('Error editing user!');

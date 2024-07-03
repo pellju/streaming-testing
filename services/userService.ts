@@ -1,6 +1,3 @@
-// Taken mostly from https://www.bezkoder.com/node-js-express-login-mongodb/
-
-
 import { db } from "../models";
 import { User } from "../models/user.model";
 
@@ -143,4 +140,35 @@ const logout = async(req: Request, res: Response) => {
     }
 }
 
-export { signUp, login, logout }
+const editUser = async(req: Request, res: Response) => {
+
+    // Already checked in controller that these exist
+    const userId = req.params.id;
+    const newPassword = req.body.password;
+    const newClass = req.body.class;
+
+    try {
+
+        const checkIfUserExists = await User.exists({ _id: userId })
+        if (!checkIfUserExists) {
+            throw new Error ('User does not exist');
+        }
+
+        if (newPassword) {
+            // Add function to update password, triggered if the password exists
+        }
+
+        if (newClass) {
+            // Add function to update a new class. This should add the class to the existing ones
+        }
+
+        // Consider what could be the proper value for returning 
+
+    } catch (e: any) {
+        console.log('Problem with editUser in userService');
+        console.log(e.message);
+        return res.status(400).json({ 'Error': 'There was an error checking that the user exists / modifying it' });
+    }
+}
+
+export { signUp, login, logout, editUser }
