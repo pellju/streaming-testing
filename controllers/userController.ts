@@ -104,9 +104,44 @@ const newInviteEndpoint = async(req: Request, res: Response) => {
 // Only admin can do this by default
 const userEdit = async(req: Request, res: Response) => {
 
-    // Changeable things?
-    // Password
-    // Adding and removing classes
+    const body = req.body;
+    const password = body.password;
+    const userClass = body.class; // Think how to check these
+    const userId = req.params.id;
+
+    if (!userId) {
+        return res.status(400).json({ 'Error': 'Missing ID in the parameter!' });
+    }
+
+    if (!body) {
+        return res.status(400).json({ 'Error': 'Missing password or classes!'});
+    } else {
+        // Enter the function used for changing the information;
+        let newUserClass = '';
+        let newPassword = '';
+        
+        if (!password && !userClass) {
+            return res.send({ 'Information': 'No information changeable'});
+        }
+
+        if (password) {
+            newPassword = password;
+        }
+
+        if (userClass) {
+            newUserClass = userClass;
+        }
+
+        try {
+            // Add a function used for the service
+            
+
+        } catch (e: any) {
+            console.log('Error editing user!');
+            console.log(e.message);
+            return res.status(400).json({ 'Error': 'Error modifying user information!'});
+        }
+    }
 }
 
 
@@ -115,7 +150,7 @@ const userRemoval = async(req: Request, res: Response) => {
     const userId = req.params.id;
 
     if (!userId) {
-        return res.json({ 'Error': 'UserID missing!'});
+        return res.status(400).json({ 'Error': 'UserID missing!'});
     }
 
     try {
@@ -123,7 +158,7 @@ const userRemoval = async(req: Request, res: Response) => {
         return res.json({ 'Information': `Removed ${removeUser} from the database!` });
     } catch (e: any) {
         console.log(e.message);
-        return res.json({ 'Error': 'Unable to remove the given userId!'});
+        return res.status(400).json({ 'Error': 'Unable to remove the given userId!'});
     }
 }
 
