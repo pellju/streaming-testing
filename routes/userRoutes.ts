@@ -32,8 +32,8 @@ userRouter.post('/dev/users/newinvite', newInviteEndpoint);
 
 userRouter.get('/dev/users/getInvites', getInvites);
 
-userRouter.post('/users/edit/:id', userEdit);
+userRouter.post('/dev/users/edit/:id', userEdit);
 
-userRouter.delete('/users/delete/:id', userRemoval);
+userRouter.delete('/dev/users/delete/:id', userRemoval);
 
 export { userRouter }
