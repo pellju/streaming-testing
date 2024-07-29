@@ -12,6 +12,8 @@ const addStream = async (req: Request, res: Response) => {
         const input = body.input;
         const name = body.name;
         const disableTlsCheck = body.disableTlsCheck;
+        const category = body.category;
+        const permission = body.permission;
 
         let checkTls: boolean = false;
         if (disableTlsCheck === undefined || !disableTlsCheck) {
@@ -24,24 +26,25 @@ const addStream = async (req: Request, res: Response) => {
             // ToDo: Improve error management and notify user that the stream with given name already exists
             res.status(400).json({ 'Error': 'Stream with given name already exists!' });
         } else {
-
-            if (!openingStream(input, name, checkTls)) {
-                res.status(400).json({ 'Error': 'There was an error opening the stream!' });
-            } else {
-
-                if (!openingStream(input, name)) {
+            try {
+                if (!openingStream(input, name, checkTls)) {
                     res.status(400).json({ 'Error': 'There was an error opening the stream!' });
                 } else {
-                    // Create a database entry here
-                    const streams = await createStreamDatabaseObject(name, input, category, permission);
-                    res.status(201).send({ 'Information': 'Successfully created new stream!', 'streams': streams });
+
+                    if (!openingStream(input, name, checkTls)) {
+                        res.status(400).json({ 'Error': 'There was an error opening the stream!' });
+                    } else {
+                        // Create a database entry here
+                        const streams = await createStreamDatabaseObject(name, input, category, permission);
+                        res.status(201).send({ 'Information': 'Successfully created new stream!', 'streams': streams });
+                    }
+                }
+                } catch (e: any) {
+                    console.log("Error with adding stream to database!");
+                    console.log(e.message);
+                    res.status(500).json({ 'Error': 'Something wrong with adding the stream from database!'});
                 }
             }
-        } catch (e: any) {
-            console.log("Error with adding stream to database!");
-            console.log(e.message);
-            res.status(500).json({ 'Error': 'Something wrong with adding the stream from database!'});
-        }
     }
 };
 

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const Invite = mongoose.model("Role", new mongoose.Schema({
+const Invite = mongoose.model("Invite", new mongoose.Schema({
     invitecode: String
 }));
 
