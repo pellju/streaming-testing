@@ -1,10 +1,22 @@
-//TEMPORARILY STORING API-KEYS
-// ToDo: Create a way of saving the key to the database!
+import { User } from '../models/user.model';
+
 let keys: string[] = [];
 
 // An extremely simple check if API-key exists
-const checkKey = (key: string): boolean => {
-    return keys.indexOf(key) > -1;
+const checkKey = async (key: string): Promise<boolean> => {
+    
+    try {
+        const user = await User.findOne({ apikey: key });
+        if (user?.id) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (e: any) {
+        console.log("API-key not found!");
+        return false;
+    }
+     
 };
 
 // Adding API-key to this temporary solution

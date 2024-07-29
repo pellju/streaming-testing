@@ -2,9 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import { checkKey } from '../services/apiKeyService';
 
 // Creating a middleware to check the 
-const apiCheckerMiddleware = (req: Request, res: Response, next: NextFunction) => {
+const apiCheckerMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const apikey: string = req.params.apikey;
-    const existing: boolean = checkKey(apikey); 
+    const existing: boolean = await checkKey(apikey); 
     if (existing) {
         next();
     } else {
