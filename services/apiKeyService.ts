@@ -1,4 +1,5 @@
 //TEMPORARILY STORING API-KEYS
+// ToDo: Create a way of saving the key to the database!
 let keys: string[] = [];
 
 // An extremely simple check if API-key exists

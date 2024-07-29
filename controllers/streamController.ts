@@ -7,19 +7,26 @@ const addStream = async (req: Request, res: Response) => {
     if (body === undefined || body.input === undefined || body.name === undefined || body.category === undefined || body.permission === undefined) {
         res.status(400).json({ 'Error': 'Incorrect body'});
     } else {
-        try {
-            // ToDo: Check that input is valid URL!
-            // ToDo: Add metadatainfo
-            const input = body.input;
-            const name = body.name;
-            const category = body.category;
-            const permission = body.permission;
+        // ToDo: Check that input is valid URL!
+        // ToDo: Add metadatainfo
+        const input = body.input;
+        const name = body.name;
+        const disableTlsCheck = body.disableTlsCheck;
 
-            // Checking that name is unique (result is -1 if does not exist):
-            // (There should not be database entry either then)
-            if (streams.findIndex(stream => stream.streamname === name) > -1) {
-                // ToDo: Improve error management and notify user that the stream with given name already exists
-                res.status(400).json({ 'Error': 'Stream with given name already exists!' });
+        let checkTls: boolean = false;
+        if (disableTlsCheck === undefined || !disableTlsCheck) {
+            checkTls = true;
+        } 
+
+
+        // Checking that name is unique (result is -1 if does not exist):
+        if (streams.findIndex(steram => steram.streamname === name) > -1) {
+            // ToDo: Improve error management and notify user that the stream with given name already exists
+            res.status(400).json({ 'Error': 'Stream with given name already exists!' });
+        } else {
+
+            if (!openingStream(input, name, checkTls)) {
+                res.status(400).json({ 'Error': 'There was an error opening the stream!' });
             } else {
 
                 if (!openingStream(input, name)) {

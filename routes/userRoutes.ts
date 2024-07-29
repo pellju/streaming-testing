@@ -1,7 +1,7 @@
 import express, {Router} from 'express';
 
 import { isAdmin } from '../middlewares/authJwt';
-import { userRegistration, userLogin, userLogout, isAdminTest } from '../controllers/userController';
+import { userRegistration, userLogin, userLogout, isAdminTest, getInvites, newInviteEndpoint, userEdit, userRemoval } from '../controllers/userController';
 
 const userRouter: Router = express.Router();
 
@@ -16,5 +16,24 @@ userRouter.post('/logout', userLogout);
 userRouter.post('/login', userLogin);
 
 userRouter.get('/admintest', isAdmin, isAdminTest);
+
+userRouter.post('/users/newinvite', isAdmin, newInviteEndpoint);
+
+userRouter.get('/users/getInvites', isAdmin, getInvites);
+
+userRouter.post('/users/edit/:id', isAdmin, userEdit);
+
+userRouter.delete('/users/delete/:id', isAdmin, userRemoval);
+
+// Development IDs endpoints
+// Disable before taken into public
+
+userRouter.post('/dev/users/newinvite', newInviteEndpoint);
+
+userRouter.get('/dev/users/getInvites', getInvites);
+
+userRouter.post('/users/edit/:id', userEdit);
+
+userRouter.delete('/users/delete/:id', userRemoval);
 
 export { userRouter }

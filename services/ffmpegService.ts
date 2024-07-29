@@ -11,7 +11,12 @@ type streaminfo = {
 let streams: streaminfo[] = [];
 
 // Opening stream and checking if it works (signal from input) => true, else => false
-const openingStream = (input: string, name: string): boolean => {
+const openingStream = (input: string, name: string, disableTlsCheck: boolean): boolean => {
+
+    let tlsCheck = 1;
+    if (disableTlsCheck) {
+        tlsCheck = 0;
+    }
 
     try {
         // Consider that input has been sanitized
@@ -22,6 +27,7 @@ const openingStream = (input: string, name: string): boolean => {
         .addOption('-hls_list_size', '3')
         .addOption('-hls_delete_threshold', '3')
         .addOption('-hls_flags delete_segments')
+        .addOption('-tls_verify', `${tlsCheck}`)
         .on('error', function(err) {
             // ToDo: Better error handling
             console.log('Following error:');
