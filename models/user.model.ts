@@ -1,15 +1,20 @@
-import mongoose from "mongoose";
+import { Schema, model } from "mongoose";
+import { Role } from "./role.model";
 
-const User = mongoose.model("User", new mongoose.Schema({
+interface UserInterface {
     username: String,
     password: String,
     apikey: String,
-    roles: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Role"
-        }
-    ]
-}));
+    roles: Schema.Types.ObjectId[]
+}
+
+const userSchema = new Schema<UserInterface>({
+    username: { type: String, required: true },
+    password: { type: String, required: true },
+    apikey: { type: String, required: true },
+    roles: [{ type: Schema.Types.ObjectId, ref: "Role" }], 
+});
+
+const User = model("User", userSchema);
 
 export { User }

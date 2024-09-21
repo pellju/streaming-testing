@@ -1,7 +1,13 @@
-import mongoose from "mongoose";
+import { Schema, model } from "mongoose";
 
-const Invite = mongoose.model("Invite", new mongoose.Schema({
-    invitecode: String
-}));
+interface InviteInterface {
+    invitecode: String;
+}
+
+const inviteSchema = new Schema<InviteInterface>({
+    invitecode: { type: String, required: true }
+});
+
+const Invite = model("Invite", inviteSchema);
 
 export { Invite }

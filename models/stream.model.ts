@@ -1,13 +1,19 @@
-import mongoose from "mongoose";
+import { Schema, model } from "mongoose";
 
-const Stream = mongoose.model("Stream", new mongoose.Schema({
+interface StreamInterface {
     name: String,
     url: String,
-    requiredLevel: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Role"
-    },
+    requiredLevel: Schema.Types.ObjectId,
     category: String
-}));
+}
+
+const streamSchema = new Schema<StreamInterface>({
+    name: { type: String, required: true },
+    url: { type: String, required: true },
+    requiredLevel: { type: Schema.Types.ObjectId, ref: "Role", required: true },
+    category: { type: String, required: true }
+}) 
+
+const Stream = model("Stream", streamSchema);
 
 export { Stream }
