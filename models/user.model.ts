@@ -2,9 +2,9 @@ import { Schema, model } from "mongoose";
 import { Role } from "./role.model";
 
 interface UserInterface {
-    username: String,
-    password: String,
-    apikey: String,
+    username: string,
+    password: string,
+    apikey: string,
     roles: Schema.Types.ObjectId[]
 }
 

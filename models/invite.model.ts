@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
 interface InviteInterface {
-    invitecode: String;
+    invitecode: string;
 }
 
 const inviteSchema = new Schema<InviteInterface>({

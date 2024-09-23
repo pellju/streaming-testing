@@ -1,10 +1,10 @@
 import { Schema, model } from "mongoose";
 
 interface StreamInterface {
-    name: String,
-    url: String,
+    name: string,
+    url: string,
     requiredLevel: Schema.Types.ObjectId,
-    category: String
+    category: string
 }
 
 const streamSchema = new Schema<StreamInterface>({

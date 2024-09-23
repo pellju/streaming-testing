@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
 interface RoleInterface {
-    name: String;
+    name: string;
 }
 
 const roleSchema = new Schema<RoleInterface>({
