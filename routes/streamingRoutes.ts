@@ -11,10 +11,13 @@ streamingRouter.get('/streams', listStreamNames);
 
 streamingRouter.delete('/remove/:name', isAdmin, removeStream);
 
-streamingRouter.post('/dev/newstream', addStream);
 
-streamingRouter.get('/dev/streams', listStreamNames);
+if (process.env.ENVIRONMENT == "DEV") {
+    streamingRouter.post('/dev/newstream', addStream);
 
-streamingRouter.delete('/dev/remove/:name', removeStream);
+    streamingRouter.get('/dev/streams', listStreamNames);
+
+    streamingRouter.delete('/dev/remove/:name', removeStream);
+}
 
 export { streamingRouter }
