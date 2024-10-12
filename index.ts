@@ -35,7 +35,10 @@ app.use(session({
 }));
 
 app.use('/secretstream/:apikey', apiCheckerMiddleware, express.static(path.join(__dirname, 'streams')));
-app.use('/stream', express.static(path.join(__dirname, 'streams')));
+if (process.env.ENVIRONMENT == "DEV") {
+    app.use('/stream', express.static(path.join(__dirname, 'streams')));
+}
+
 
 
 app.get('/', (req: Request, res: Response) => {
