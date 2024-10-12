@@ -61,9 +61,8 @@ const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
                 return res.status(500).json({ "Error": "Error with the authorization "});
             } else {
                 const userId = user.id;
-                const findUserById = await db.User.findById(userId);
+                const findUserById = await db.User.findById(userId).populate('roles').exec();
                 const roleIds = findUserById?.roles.map(role => role._id.toString());
-
                 if (roleIds) {
                     for (let i: number =0; i < roleIds?.length; i++) {
                         const role = await db.Role.findById(roleIds[i]);

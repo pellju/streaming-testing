@@ -1,10 +1,12 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
+import { RoleInterface } from "./role.model";
 
 interface StreamInterface {
-    name: string,
-    url: string,
-    requiredLevel: Schema.Types.ObjectId,
-    category: string
+    _id: Types.ObjectId;
+    name: string;
+    url: string;
+    requiredLevel: (Types.ObjectId | RoleInterface);
+    category: string;
 }
 
 const streamSchema = new Schema<StreamInterface>({

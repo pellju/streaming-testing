@@ -45,7 +45,7 @@ const createStreamDatabaseObject = async(name: string, url: string, category: st
         const newStreamObject = new db.Stream({
             name: name,
             url: url,
-            category: category
+            category: category,
         });
 
         const correctRole = await db.Role.find({
@@ -54,7 +54,7 @@ const createStreamDatabaseObject = async(name: string, url: string, category: st
 
         console.log(correctRole);
 
-        newStreamObject.requiredLevel = correctRole[0]._id;
+        newStreamObject.requiredLevel = correctRole[0];
         await newStreamObject.save();
 
         console.log("newStreamObject saved");

@@ -1,11 +1,12 @@
-import { Schema, model } from "mongoose";
-import { Role } from "./role.model";
+import { Schema, model, Types } from "mongoose";
+import { RoleInterface } from "./role.model";
 
 interface UserInterface {
-    username: string,
-    password: string,
-    apikey: string,
-    roles: Schema.Types.ObjectId[]
+    _id: Types.ObjectId;
+    username: string;
+    password: string;
+    apikey: string;
+    roles: (Types.ObjectId | RoleInterface )[];
 }
 
 const userSchema = new Schema<UserInterface>({

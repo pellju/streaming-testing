@@ -1,6 +1,7 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
 interface RoleInterface {
+    _id: Types.ObjectId;
     name: string;
 }
 
@@ -10,4 +11,4 @@ const roleSchema = new Schema<RoleInterface>({
 
 const Role = model("Role", roleSchema);
 
-export { Role }
+export { Role, RoleInterface }
