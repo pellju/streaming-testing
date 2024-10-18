@@ -2,7 +2,6 @@ import { db } from "../models";
 
 const findAllStreams = async() => {
     const streams = await db.Stream.find();
-
     return streams;
 }
 
@@ -10,7 +9,7 @@ const findStreamsUserCanSee = async(roles: string[]) => {
 
     try {
 
-        const validRoles = db.ROLES;
+        const validRoles: string[] = db.ROLES;
 
         for (let i=0; i<roles.length; i++) {
             if (!validRoles.includes(roles[i])) {
@@ -35,8 +34,7 @@ const findStreamsUserCanSee = async(roles: string[]) => {
 const createStreamDatabaseObject = async(name: string, url: string, category: string, permissionRole: string) => {
 
     try {
-
-       const validRoles = db.ROLES;
+       const validRoles: string[] = db.ROLES;
 
         if (!validRoles.includes(permissionRole)) {
             throw new Error ("Incorrect permission given!");

@@ -25,14 +25,12 @@ const signUp = async (req: Request, res: Response) => {
 
     try {
         console.log('creating user object');
-        // Add type
         const newUser = new db.User({
             username: username,
             password: bcrypt.hashSync(password, 10),
             apikey: generateNewToken()
         });
 
-        // Add type
         const roles = db.ROLES;
 
         // Change that the Role is not admin only i.e. including all the classes
@@ -50,9 +48,8 @@ const signUp = async (req: Request, res: Response) => {
                 }).exec();
                 
                 console.log('roles: saving roles');
-
-                // If the user is the first user in the system
-                if (numberOfUsers === 0) {
+                // If the user is the first user in the system, saved above before defining "numberOfUsers"
+                if (numberOfUsers === 1) {
                     savedUser.roles = findingRoles.map((role: any) => role._id);
                 } else {
                     // Hardcoded, create a better solution
