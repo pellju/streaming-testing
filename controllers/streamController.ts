@@ -1,8 +1,8 @@
-import {Request, Response } from 'express';
+import {Request, Response, NextFunction } from 'express';
 import { streams, openingStream, deleteStream } from '../services/ffmpegService';
 import { removeStreamDatabaseObject, createStreamDatabaseObject, findStreamsUserCanSee, findAllStreams } from '../services/streamDatabaseService';
 
-const addStream = async (req: Request, res: Response) => {
+const addStream = async (req: Request, res: Response, next: NextFunction) => {
     const body = req.body;
     if (body === undefined || body.input === undefined || body.name === undefined || body.category === undefined || body.permission === undefined) {
         res.status(400).json({ 'Error': 'Incorrect body'});
@@ -48,7 +48,7 @@ const addStream = async (req: Request, res: Response) => {
     }
 };
 
-const removeStream = async (req: Request, res: Response) => {
+const removeStream = async (req: Request, res: Response, next: NextFunction) => {
     // ToDo: Sanitizing
     const name: string = req.params.name;
     if (req === undefined || name === undefined) {
@@ -69,7 +69,7 @@ const removeStream = async (req: Request, res: Response) => {
     }
 };
 
-const listStreamNames = async (req: Request, res: Response) => {
+const listStreamNames = async (req: Request, res: Response, next: NextFunction) => {
     const streamsFromDatabase = await findAllStreams();
 
     if (streamsFromDatabase.length === 0 || !streamsFromDatabase) {
