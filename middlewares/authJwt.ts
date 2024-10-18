@@ -71,27 +71,28 @@ const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
 const isFulluser = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
-    if (!req.headers || !req.headers.token) {
+    if (!req.headers || !req.headers.authorization) {
         return res.status(400).json({ 'Error': 'Token missing' });
     } else {
         try {
-            const token = req.headers.token.toString();
+            const token = req.headers.authorization.toString();
+            const extractedToken = token.split("Bearer ")[1]
             let user: userObjectContainingId = {id: null};
-            jwt.verify(token, JWT_SECRET, (err: any, decoded: any) => {
-
+            jwt.verify(extractedToken, JWT_SECRET, (err: any, decoded: any) => {
                 if (err) {
-                    return res.status(401).json({ 'Error': 'Unauthorized access!' });
+                    //return res.status(401).json({ 'Error': 'Unauthorized access!' });
+                    throw new Error("Unauthorized")
+                } else {
+                    user = decoded as { id: string };
                 }
-                user = decoded as { id: string };
             });
 
-            if (!user) {
+            if (!user || !user.id) {
                 return res.status(500).json({ "Error": "Error with the authorization "});
             } else {
                 const userId = user.id;
-                const findUserById = await db.User.findById(userId);
+                const findUserById = await db.User.findById(userId).populate('roles').exec();
                 const roleIds = findUserById?.roles.map(role => role._id.toString());
-
                 if (roleIds) {
                     for (let i: number =0; i < roleIds?.length; i++) {
                         const role = await db.Role.findById(roleIds[i]);
@@ -107,34 +108,35 @@ const isFulluser = async (req: AuthRequest, res: Response, next: NextFunction) =
         } catch (e: any) {
             console.log("Error!");
             console.log(e.message);
-            res.status(500).json({ 'Error': e.message });
+            res.status(500).json({ 'Error': "An unknown authorization token detected!" });
         }
     }
 };
 
 const isUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
-    if (!req.headers || !req.headers.token) {
+    if (!req.headers || !req.headers.authorization) {
         return res.status(400).json({ 'Error': 'Token missing' });
     } else {
         try {
-            const token = req.headers.token.toString();
+            const token = req.headers.authorization.toString();
+            const extractedToken = token.split("Bearer ")[1]
             let user: userObjectContainingId = {id: null};
-            jwt.verify(token, JWT_SECRET, (err: any, decoded: any) => {
-
+            jwt.verify(extractedToken, JWT_SECRET, (err: any, decoded: any) => {
                 if (err) {
-                    return res.status(401).json({ 'Error': 'Unauthorized access!' });
+                    //return res.status(401).json({ 'Error': 'Unauthorized access!' });
+                    throw new Error("Unauthorized")
+                } else {
+                    user = decoded as { id: string };
                 }
-                user = decoded as { id: string };
             });
 
-            if (!user) {
+            if (!user || !user.id) {
                 return res.status(500).json({ "Error": "Error with the authorization "});
             } else {
                 const userId = user.id;
-                const findUserById = await db.User.findById(userId);
+                const findUserById = await db.User.findById(userId).populate('roles').exec();
                 const roleIds = findUserById?.roles.map(role => role._id.toString());
-
                 if (roleIds) {
                     for (let i: number =0; i < roleIds?.length; i++) {
                         const role = await db.Role.findById(roleIds[i]);
@@ -150,7 +152,7 @@ const isUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
         } catch (e: any) {
             console.log("Error!");
             console.log(e.message);
-            res.status(500).json({ 'Error': e.message });
+            res.status(500).json({ 'Error': "An unknown authorization token detected!" });
         }
     }
 };
