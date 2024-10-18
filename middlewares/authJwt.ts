@@ -25,22 +25,6 @@ declare module 'express-session' {
     }
 };
 
-const verifyingToken = (req: AuthRequest, res: Response, next: NextFunction) => {
-    let token: any = req.session.token?.key;
-
-    if (!token) {
-        res.status(403).json({ 'Error': 'No token provided!' })
-    }
-
-    jwt.verify(token, JWT_SECRET, (err: any, decoded: any) => {
-        if (err) {
-            return res.status(401).json({ 'Error': 'Unauthorized access!' });
-        }
-        req.user = decoded as { userId: string };
-        next();
-    });
-};
-
 const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
     if (!req.headers || !req.headers.authorization) {
@@ -171,4 +155,4 @@ const isUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
     }
 };
 
-export { verifyingToken, isAdmin, isFulluser, isUser }
+export { isAdmin, isFulluser, isUser }
