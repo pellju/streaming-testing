@@ -1,5 +1,4 @@
 import ffmpeg, {FfmpegCommand} from 'fluent-ffmpeg';
-import path from 'path';
 
 // Defining custom type for the combination of Strings (names) and Ffmpegs
 type streaminfo = {
@@ -7,7 +6,7 @@ type streaminfo = {
     streamobject: FfmpegCommand;
 }
 
-// ToDo: use MongoDB or MariaDB or PostgreSQL instead of array
+// Using an array to store the streaming object itself
 let streams: streaminfo[] = [];
 
 // Opening stream and checking if it works (signal from input) => true, else => false

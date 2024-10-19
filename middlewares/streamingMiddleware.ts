@@ -1,3 +1,5 @@
+// This file needs to be re-written because the API-key is User-related
+
 import { Request, Response, NextFunction } from 'express';
 import { checkKey } from '../services/apiKeyService';
 

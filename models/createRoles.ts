@@ -1,7 +1,7 @@
 import { db } from './index';
 
 
-const roleCreation = async () => {
+const roleCreation = async (): Promise<void> => {
     try {
         await db.mongoose.connect(`mongodb://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DATABASE}`);
         console.log("Successfully connected to the database!");
@@ -16,9 +16,9 @@ const roleCreation = async () => {
 
 // Creating pre-defined roles:
 // Improve and set types properly
-const createRoles = async () => {
+const createRoles = async (): Promise<void> => {
     try {
-        const roleCount = await db.Role.estimatedDocumentCount();
+        const roleCount: number = await db.Role.estimatedDocumentCount();
         if (roleCount === 0) {
             const roles = db.ROLES;
 

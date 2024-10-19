@@ -1,7 +1,14 @@
-import mongoose from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
-const Role = mongoose.model("Role", new mongoose.Schema({
-    name: String
-}));
+interface RoleInterface {
+    _id: Types.ObjectId;
+    name: string;
+}
 
-export { Role }
+const roleSchema = new Schema<RoleInterface>({
+    name: { type: String, required: true }
+})
+
+const Role = model("Role", roleSchema);
+
+export { Role, RoleInterface }

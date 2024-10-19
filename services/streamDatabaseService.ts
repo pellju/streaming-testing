@@ -1,8 +1,9 @@
 import { db } from "../models";
+import { StreamInterface } from "../models/stream.model";
 
-const findAllStreams = async() => {
-    const streams = await db.Stream.find();
-
+// Stream object must be created as class
+const findAllStreams = async(): Promise<StreamInterface[]> => {
+    const streams: StreamInterface[] = await db.Stream.find().lean();
     return streams;
 }
 
@@ -10,7 +11,7 @@ const findStreamsUserCanSee = async(roles: string[]) => {
 
     try {
 
-        const validRoles = db.ROLES;
+        const validRoles: string[] = db.ROLES;
 
         for (let i=0; i<roles.length; i++) {
             if (!validRoles.includes(roles[i])) {
@@ -32,11 +33,10 @@ const findStreamsUserCanSee = async(roles: string[]) => {
 }
 
 // Returning streaming list
-const createStreamDatabaseObject = async(name: string, url: string, category: string, permissionRole: string) => {
+const createStreamDatabaseObject= async(name: string, url: string, category: string, permissionRole: string): Promise<StreamInterface[] | null>  => {
 
     try {
-
-       const validRoles = db.ROLES;
+       const validRoles: string[] = db.ROLES;
 
         if (!validRoles.includes(permissionRole)) {
             throw new Error ("Incorrect permission given!");
@@ -45,7 +45,7 @@ const createStreamDatabaseObject = async(name: string, url: string, category: st
         const newStreamObject = new db.Stream({
             name: name,
             url: url,
-            category: category
+            category: category,
         });
 
         const correctRole = await db.Role.find({
@@ -54,7 +54,7 @@ const createStreamDatabaseObject = async(name: string, url: string, category: st
 
         console.log(correctRole);
 
-        newStreamObject.requiredLevel = correctRole[0]._id;
+        newStreamObject.requiredLevel = correctRole[0];
         await newStreamObject.save();
 
         console.log("newStreamObject saved");
