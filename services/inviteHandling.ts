@@ -32,7 +32,7 @@ const createNewInvite = async(): Promise<boolean> => {
 
 const removeInvite = async(invite: string): Promise<boolean> => {
     try {
-        const inviteCheck = await db.Invite.countDocuments({ invitecode: invite });
+        const inviteCheck: number = await db.Invite.countDocuments({ invitecode: invite });
         if (inviteCheck > 0) {
             await db.Invite.deleteOne({ invitecode: invite })
             return true;

@@ -36,8 +36,7 @@ const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
             let user: userObjectContainingId = {id: null};
             jwt.verify(extractedToken, JWT_SECRET, (err: any, decoded: any) => {
                 if (err) {
-                    //return res.status(401).json({ 'Error': 'Unauthorized access!' });
-                    throw new Error("Unauthorized")
+                    throw new Error("Unauthorized");
                 } else {
                     user = decoded as { id: string };
                 }
@@ -80,8 +79,7 @@ const isFulluser = async (req: AuthRequest, res: Response, next: NextFunction) =
             let user: userObjectContainingId = {id: null};
             jwt.verify(extractedToken, JWT_SECRET, (err: any, decoded: any) => {
                 if (err) {
-                    //return res.status(401).json({ 'Error': 'Unauthorized access!' });
-                    throw new Error("Unauthorized")
+                    throw new Error("Unauthorized");
                 } else {
                     user = decoded as { id: string };
                 }
@@ -124,8 +122,7 @@ const isUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
             let user: userObjectContainingId = {id: null};
             jwt.verify(extractedToken, JWT_SECRET, (err: any, decoded: any) => {
                 if (err) {
-                    //return res.status(401).json({ 'Error': 'Unauthorized access!' });
-                    throw new Error("Unauthorized")
+                    throw new Error("Unauthorized");
                 } else {
                     user = decoded as { id: string };
                 }

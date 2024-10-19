@@ -1,3 +1,5 @@
+// This file needs to be re-written considering the fact the API-keys are user-related
+
 import { User } from '../models/user.model';
 
 let keys: string[] = [];

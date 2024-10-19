@@ -7,7 +7,7 @@ type streaminfo = {
     streamobject: FfmpegCommand;
 }
 
-// ToDo: use MongoDB or MariaDB or PostgreSQL instead of array
+// Using an array to store the streaming object itself
 let streams: streaminfo[] = [];
 
 // Opening stream and checking if it works (signal from input) => true, else => false

@@ -1,3 +1,5 @@
+// This file needs to be re-written considering that API-keys are related to user-information
+
 import {Request, Response } from 'express';
 import { keys, addingApiKey, removeApiKey } from "../services/apiKeyService";
 
