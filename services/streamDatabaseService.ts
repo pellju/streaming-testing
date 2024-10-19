@@ -1,8 +1,9 @@
 import { db } from "../models";
+import { StreamInterface } from "../models/stream.model";
 
 // Stream object must be created as class
-const findAllStreams = async() => {
-    const streams = await db.Stream.find();
+const findAllStreams = async(): Promise<StreamInterface[]> => {
+    const streams: StreamInterface[] = await db.Stream.find().lean();
     return streams;
 }
 
@@ -32,7 +33,7 @@ const findStreamsUserCanSee = async(roles: string[]) => {
 }
 
 // Returning streaming list
-const createStreamDatabaseObject = async(name: string, url: string, category: string, permissionRole: string) => {
+const createStreamDatabaseObject= async(name: string, url: string, category: string, permissionRole: string): Promise<StreamInterface[] | null>  => {
 
     try {
        const validRoles: string[] = db.ROLES;

@@ -20,4 +20,4 @@ const streamSchema = new Schema<StreamInterface>({
 
 const Stream = model("Stream", streamSchema);
 
-export { Stream }
+export { Stream, StreamInterface }

@@ -1,5 +1,4 @@
 import ffmpeg, {FfmpegCommand} from 'fluent-ffmpeg';
-import path from 'path';
 
 // Defining custom type for the combination of Strings (names) and Ffmpegs
 type streaminfo = {

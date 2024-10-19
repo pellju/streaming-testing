@@ -31,8 +31,8 @@ const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
         return res.status(400).json({ 'Error': 'Token missing' });
     } else {
         try {
-            const token = req.headers.authorization.toString();
-            const extractedToken = token.split("Bearer ")[1]
+            const token: string = req.headers.authorization.toString();
+            const extractedToken: string = token.split("Bearer ")[1]
             let user: userObjectContainingId = {id: null};
             jwt.verify(extractedToken, JWT_SECRET, (err: any, decoded: any) => {
                 if (err) {
@@ -45,9 +45,9 @@ const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
             if (!user || !user.id) {
                 return res.status(500).json({ "Error": "Error with the authorization "});
             } else {
-                const userId = user.id;
+                const userId: string = user.id;
                 const findUserById = await db.User.findById(userId).populate('roles').exec();
-                const roleIds = findUserById?.roles.map(role => role._id.toString());
+                const roleIds: string[] | undefined = findUserById?.roles.map(role => role._id.toString());
                 if (roleIds) {
                     for (let i: number =0; i < roleIds?.length; i++) {
                         const role = await db.Role.findById(roleIds[i]);
@@ -74,8 +74,8 @@ const isFulluser = async (req: AuthRequest, res: Response, next: NextFunction) =
         return res.status(400).json({ 'Error': 'Token missing' });
     } else {
         try {
-            const token = req.headers.authorization.toString();
-            const extractedToken = token.split("Bearer ")[1]
+            const token: string = req.headers.authorization.toString();
+            const extractedToken: string = token.split("Bearer ")[1]
             let user: userObjectContainingId = {id: null};
             jwt.verify(extractedToken, JWT_SECRET, (err: any, decoded: any) => {
                 if (err) {
@@ -88,7 +88,7 @@ const isFulluser = async (req: AuthRequest, res: Response, next: NextFunction) =
             if (!user || !user.id) {
                 return res.status(500).json({ "Error": "Error with the authorization "});
             } else {
-                const userId = user.id;
+                const userId: string = user.id;
                 const findUserById = await db.User.findById(userId).populate('roles').exec();
                 const roleIds = findUserById?.roles.map(role => role._id.toString());
                 if (roleIds) {
@@ -117,8 +117,8 @@ const isUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
         return res.status(400).json({ 'Error': 'Token missing' });
     } else {
         try {
-            const token = req.headers.authorization.toString();
-            const extractedToken = token.split("Bearer ")[1]
+            const token: string = req.headers.authorization.toString();
+            const extractedToken: string = token.split("Bearer ")[1]
             let user: userObjectContainingId = {id: null};
             jwt.verify(extractedToken, JWT_SECRET, (err: any, decoded: any) => {
                 if (err) {
@@ -131,7 +131,7 @@ const isUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
             if (!user || !user.id) {
                 return res.status(500).json({ "Error": "Error with the authorization "});
             } else {
-                const userId = user.id;
+                const userId: string = user.id;
                 const findUserById = await db.User.findById(userId).populate('roles').exec();
                 const roleIds = findUserById?.roles.map(role => role._id.toString());
                 if (roleIds) {
