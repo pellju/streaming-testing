@@ -1,5 +1,4 @@
 import {Request, Response } from 'express';
-import { db } from "../models";
 import { User } from '../models/user.model';
 import { signUp, login, logout, editUser } from '../services/userService';
 import { createNewInvite, listInvites, removeInvite } from '../services/inviteHandling';
@@ -10,6 +9,7 @@ const userRegistration = async (req: Request, res: Response) => {
     const password: string = body.password;
     const invitecode: string = body.invitecode; // Create a simple check afterwards that if the userDatabase is empty, a separate invite code for the first user
 
+    // Checking if required information is given
     if (body === undefined) {
         return res.status(400).json({ 'Error': 'Missing registration data!'});
     } else if (username === undefined) {
@@ -20,20 +20,22 @@ const userRegistration = async (req: Request, res: Response) => {
         return res.status(400).json({ 'Error': 'Missing invitecode!'});
     } else {
         try {
+            // Checking if there's an existing user with the given username
             const findingUser = await User.findOne({ username: username });
             if (findingUser) {
                 res.status(400).json({ 'Error': 'User with given username exists!' });
             } else {
+                // Checking if the given invite is is valid (or if the number of existing users is larger than 0 meaning that first user can be done without invite)
                 const numberOfUsers = await User.countDocuments({});
                 const inviteCheck = await removeInvite(invitecode);
                 if (!inviteCheck && numberOfUsers > 0) {
                     res.status(400).json({ 'Error': 'Invite incorrect!' });
                 } else {
+                    // In case everything works, forwarding the request to service handling the signup
                     return await signUp(req, res);
                 }
             }
             
-
         } catch (e: any) {
             console.log("Registration error!");
             console.log(e.message);
@@ -47,6 +49,7 @@ const userLogin = async (req: Request, res: Response) => {
     const username: string = body.username;
     const password: string = body.password;
 
+    // Testing if the required fields are given
     if (body === undefined) {
         return res.status(400).json({ 'Error': 'Login registration data!'});
     } else if (username === undefined) {
@@ -55,9 +58,10 @@ const userLogin = async (req: Request, res: Response) => {
         return res.status(400).json({ 'Error': 'Missing password!'});
     } else {
         try {
-
+            // Checking if there's a user with given username
             const findingUser = await User.findOne({ username: username });
             if (findingUser) {
+                // In case there is, requesting the login function
                 return await login(req, res);
             } else {
                 res.status(400).json({ 'Error': 'User with given username does not exist!' });
@@ -71,6 +75,7 @@ const userLogin = async (req: Request, res: Response) => {
     }
 }
 
+// Setting the logout function
 const userLogout = async (req: Request, res: Response) => {
     try {
         return await logout(req,res);
@@ -85,11 +90,13 @@ const isAdminTest = async (req: Request, res: Response) => {
     res.send({"Information": "You are an admin!" });
 }
 
+// Function to get the existing invite codes
 const getInvites = async(req: Request, res: Response) => {
     const invites = await listInvites();
     res.send({"Invitecodes": invites });
 }
 
+// Creating a new invite
 const newInviteEndpoint = async(req: Request, res: Response) => {
     const inviteCheck = await createNewInvite();
     if (inviteCheck) {
@@ -102,6 +109,7 @@ const newInviteEndpoint = async(req: Request, res: Response) => {
 }
 
 // Only admin can do this by default
+// ToDo: WIP
 const userEdit = async(req: Request, res: Response) => {
 
     const body = req.body;

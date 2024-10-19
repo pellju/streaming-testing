@@ -1,5 +1,6 @@
 import { db } from "../models";
 
+// Stream object must be created as class
 const findAllStreams = async() => {
     const streams = await db.Stream.find();
     return streams;

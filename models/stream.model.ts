@@ -1,6 +1,8 @@
 import { Schema, model, Types } from "mongoose";
 import { RoleInterface } from "./role.model";
 
+// Todo: Create an exportable Stream class
+
 interface StreamInterface {
     _id: Types.ObjectId;
     name: string;
