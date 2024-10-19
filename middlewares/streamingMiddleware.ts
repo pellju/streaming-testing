@@ -1,17 +1,16 @@
-// This file needs to be re-written because the API-key is User-related
-
 import { Request, Response, NextFunction } from 'express';
-import { checkKey } from '../services/apiKeyService';
+import { UserInterface } from '../models/user.model';
+import { db } from '../models';
 
-// Creating a middleware to check the 
 const apiCheckerMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const apikey: string = req.params.apikey;
-    const existing: boolean = await checkKey(apikey); 
-    if (existing) {
+    const suitableUser: UserInterface | null = await db.User.findOne({ apikey: apikey });
+
+    if (suitableUser) {
         next();
     } else {
         res.status(403).send({ "Error": "Incorrect API-key!" });
     }
-};
+}
 
 export { apiCheckerMiddleware }
