@@ -1,3 +1,6 @@
+# Ignoring streams
+streams/
+
 # Logs
 logs
 *.log

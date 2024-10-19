@@ -1,5 +1,6 @@
 import { db } from "../models";
-import { User } from "../models/user.model";
+import { User, UserInterface } from "../models/user.model";
+import { RoleInterface } from "../models/role.model";
 
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -20,8 +21,8 @@ const generateNewToken = (): string => {
 const signUp = async (req: Request, res: Response) => {
 
     console.log('bodycheck');
-    const username = req.body.username;
-    const password = req.body.password;
+    const username: string = req.body.username;
+    const password: string = req.body.password;
 
     try {
         console.log('creating user object');
@@ -33,11 +34,9 @@ const signUp = async (req: Request, res: Response) => {
 
         const roles = db.ROLES;
 
-        // Change that the Role is not admin only i.e. including all the classes
-        // Change return falses to another values...
         console.log('saving user...');
         const savedUser = await newUser.save();
-        const numberOfUsers = await User.countDocuments({});
+        const numberOfUsers: number = await User.countDocuments({});
 
         console.log('roles');
         if (roles) {
@@ -79,7 +78,7 @@ const login = async (req: Request, res: Response) => {
     const password = req.body.password;
 
     try {
-        const existingUser = await db.User.findOne({ username: username }).populate("roles", "-__v");
+        const existingUser: UserInterface | null = await db.User.findOne({ username: username }).populate("roles", "-__v");
         
         if (!existingUser || !existingUser.password) {
             res.status(401).json({ "Error": "Username or password incorrect!" });
@@ -94,7 +93,7 @@ const login = async (req: Request, res: Response) => {
                     console.log("SET COOKIETOKENSECRET!");
                     res.status(500).json({ "Error": "A serverside error!" });
                 } else {
-                    const token = jwt.sign({ id: existingUser.id }, process.env.COOKIETOKENSECRET, {algorithm: 'HS256', allowInsecureKeySizes: true, expiresIn: 3600,});
+                    const token = jwt.sign({ id: existingUser._id }, process.env.COOKIETOKENSECRET, {algorithm: 'HS256', allowInsecureKeySizes: true, expiresIn: 3600,});
                     req.session.token = { key: token };
 
                     const roles = [];

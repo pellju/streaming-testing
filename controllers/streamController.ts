@@ -64,7 +64,7 @@ const removeStream = async (req: Request, res: Response, next: NextFunction) => 
     } else {
         try {
             if (deleteStream(name)) {
-                const existingStreams = await removeStreamDatabaseObject(name);
+                const existingStreams: StreamInterface[] | null = await removeStreamDatabaseObject(name);
                 res.send({ "Information": "Stream deleted!", "Streams": existingStreams });
             } else {
                 res.status(400).json({ "Error": "No such stream name!" });
@@ -78,7 +78,7 @@ const removeStream = async (req: Request, res: Response, next: NextFunction) => 
 };
 
 const listStreamNames = async (req: Request, res: Response, next: NextFunction) => {
-    const streamsFromDatabase = await findAllStreams();
+    const streamsFromDatabase: StreamInterface[] | null = await findAllStreams();
 
     if (streamsFromDatabase.length === 0 || !streamsFromDatabase) {
         res.send({ "items": [] });

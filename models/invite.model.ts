@@ -11,4 +11,4 @@ const inviteSchema = new Schema<InviteInterface>({
 
 const Invite = model("Invite", inviteSchema);
 
-export { Invite }
+export { Invite, InviteInterface }
