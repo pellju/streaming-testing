@@ -1,6 +1,6 @@
 import {Request, Response } from 'express';
 import { User } from '../models/user.model';
-import { signUp, login, logout, editUser } from '../services/userService';
+import { signUp, login, logout, editUser, renewingAPIkey } from '../services/userService';
 import { createNewInvite, listInvites, removeInvite } from '../services/inviteHandling';
 
 const userRegistration = async (req: Request, res: Response) => {
@@ -108,6 +108,11 @@ const newInviteEndpoint = async(req: Request, res: Response) => {
     }
 }
 
+const changeApiKey = async(req: Request, res: Response) => {
+    // Authentication needs to be checked (i.e. that the token belongs to the user)
+    // If succeeded, use renewingAPIkey to generate and set the refreshed API-key to the user
+}
+
 // Only admin can do this by default
 // ToDo: WIP
 const userEdit = async(req: Request, res: Response) => {
@@ -170,4 +175,4 @@ const userRemoval = async(req: Request, res: Response) => {
     }
 }
 
-export { userRegistration, userLogin, userLogout, isAdminTest, getInvites, newInviteEndpoint, userRemoval, userEdit }
+export { userRegistration, userLogin, userLogout, isAdminTest, getInvites, newInviteEndpoint, userRemoval, userEdit, changeApiKey }

@@ -167,4 +167,11 @@ const editUser = async(req: Request, res: Response) => {
     }
 }
 
-export { signUp, login, logout, editUser }
+const renewingAPIkey = async (req: Request, res: Response) => {
+    // The idea is that the user can renew their API-key using this function.
+    // Basically, the authorization has been done already at this point
+    const newAPIkey: string = generateNewToken();
+    
+}
+
+export { signUp, login, logout, editUser, renewingAPIkey }
