@@ -1,6 +1,6 @@
 import { db } from "../models";
 import { User, UserInterface } from "../models/user.model";
-import { RoleInterface } from "../models/role.model";
+import { extractUserFromToken } from "../utils/extractUserFromToken";
 
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -170,8 +170,30 @@ const editUser = async(req: Request, res: Response) => {
 const renewingAPIkey = async (req: Request, res: Response) => {
     // The idea is that the user can renew their API-key using this function.
     // Basically, the authorization has been done already at this point
-    const newAPIkey: string = generateNewToken();
-    
+    if (!req.headers || !req.headers.authorization) {
+        return res.status(400).json({ 'Error': 'Token missing' });
+    } else {
+        try {
+            const userID: string | null = extractUserFromToken(req.headers.authorization.toString());
+            if (!userID) {
+                return res.status(500).json({ "Error": "Error with the authorization "});
+            } else {
+                const newAPIkey: string = generateNewToken();
+                const user = await db.User.findById(userID);
+                if (user) {
+                    user.apikey = newAPIkey;
+                    await user.save();
+                    return res.status(200).send({ 'Information': 'API-key changed successfully', 'apikey': newAPIkey });
+                } else {
+                    throw new Error('Unknown user-related error!');
+                }
+            }
+        } catch (e: any) {
+            console.log("Error!");
+            console.log(e.message);
+            res.status(500).json({ 'Error': "An unknown authorization token detected!" });
+        }
+    }
 }
 
 export { signUp, login, logout, editUser, renewingAPIkey }

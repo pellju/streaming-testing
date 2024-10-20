@@ -1,4 +1,4 @@
-import {Request, Response } from 'express';
+import {NextFunction, Request, Response } from 'express';
 import { User } from '../models/user.model';
 import { signUp, login, logout, editUser, renewingAPIkey } from '../services/userService';
 import { createNewInvite, listInvites, removeInvite } from '../services/inviteHandling';
@@ -98,9 +98,9 @@ const getInvites = async(req: Request, res: Response) => {
 
 // Creating a new invite
 const newInviteEndpoint = async(req: Request, res: Response) => {
-    const inviteCheck = await createNewInvite();
+    const inviteCheck: boolean = await createNewInvite();
     if (inviteCheck) {
-        const allInvites = await listInvites();
+        const allInvites: string[] = await listInvites();
         res.send({ "Invitecodes": allInvites });
     } else {
         console.log("An issue creating a new invite!");
@@ -108,9 +108,16 @@ const newInviteEndpoint = async(req: Request, res: Response) => {
     }
 }
 
-const changeApiKey = async(req: Request, res: Response) => {
+const changeApiKey = async(req: Request, res: Response, next: NextFunction) => {
     // Authentication needs to be checked (i.e. that the token belongs to the user)
     // If succeeded, use renewingAPIkey to generate and set the refreshed API-key to the user
+    try {
+        return renewingAPIkey(req, res);
+    } catch (e: any) {
+        console.log("Error changing User API-key!");
+        console.log(e.message);
+        res.status(500).json({ 'Error': 'Unknown error!' });
+    }
 }
 
 // Only admin can do this by default

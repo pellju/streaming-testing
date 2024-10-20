@@ -50,7 +50,7 @@ const removeInvite = async(invite: string): Promise<boolean> => {
 // Listing existing invites.
 // Note! Admin-class is required!
 
-const listInvites = async(): Promise<String[]> => {
+const listInvites = async(): Promise<string[]> => {
     try {
         const inviteList = await db.Invite.find();
         const stringifiedInvites = inviteList.map((invite: any) => invite.invitecode.toString());

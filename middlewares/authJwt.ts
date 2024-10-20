@@ -32,7 +32,7 @@ const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
     } else {
         try {
             const token: string = req.headers.authorization.toString();
-            const extractedToken: string = token.split("Bearer ")[1]
+            const extractedToken: string = token.split("Bearer ")[1];
             let user: userObjectContainingId = {id: null};
             jwt.verify(extractedToken, JWT_SECRET, (err: any, decoded: any) => {
                 if (err) {
