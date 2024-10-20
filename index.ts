@@ -4,7 +4,6 @@ import session from 'express-session';
 
 import { apiCheckerMiddleware } from './middlewares/streamingMiddleware';
 import { streamingRouter } from './routes/streamingRoutes';
-import { apiRouter } from './routes/apiRoutes';
 import { userRouter } from './routes/userRoutes';
 
 // For connecting to the database:
@@ -46,7 +45,6 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use(streamingRouter);
-app.use(apiRouter);
 app.use(userRouter);
 
 app.listen(3000, () => {

@@ -1,7 +1,7 @@
 import express, {Router} from 'express';
 
 import { isAdmin } from '../middlewares/authJwt';
-import { userRegistration, userLogin, userLogout, isAdminTest, getInvites, newInviteEndpoint, userEdit, userRemoval } from '../controllers/userController';
+import { userRegistration, userLogin, userLogout, isAdminTest, getInvites, newInviteEndpoint, userEdit, userRemoval, changeApiKey } from '../controllers/userController';
 
 const userRouter: Router = express.Router();
 
@@ -24,6 +24,8 @@ userRouter.get('/users/getInvites', isAdmin, getInvites);
 userRouter.post('/users/edit/:id', isAdmin, userEdit);
 
 userRouter.delete('/users/delete/:id', isAdmin, userRemoval);
+
+userRouter.post('/users/renewapi', changeApiKey)
 
 
 if (process.env.ENVIRONMENT == "DEV") {
