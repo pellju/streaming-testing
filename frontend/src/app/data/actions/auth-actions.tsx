@@ -20,12 +20,20 @@ export async function loginAction (formData: FormData) {
 
         // Create a try-catch
 
-        const response = await axios.post(loginUrl, data);
-        console.log("responseData:");
-        const responseData = response.data;
-        console.log(responseData)
+        try {
+            const response = await axios.post(loginUrl, data);
+            console.log("responseData:");
+            const responseData = response.data;
+            console.log(responseData)
+            const token = `Bearer ${responseData.token}`;
+            return token;
+        } catch (e: any) {
+            console.log("Error!");
+            console.log(e.err);
+            return null;
+        }
 
-        return null;
+        
     }
 }
 
@@ -34,13 +42,6 @@ export async function registerAction (formData: FormData) {
     const password: string|undefined = formData.get('password')?.toString();
     const password_again: string|undefined = formData.get('password_again')?.toString();
     const invitecode: string|undefined = formData.get('invitecode')?.toString();
-
-    console.log("---");
-    console.log(username);
-    console.log(password);
-    console.log(password_again);
-    console.log(invitecode);
-    console.log("---");
 
     if (!username || !password || !invitecode) {
         console.log("username or password or invitecode missing");

@@ -100,7 +100,7 @@ const login = async (req: Request, res: Response) => {
                     for (let i = 0; i < existingUser.roles.length; i++) {
                         roles.push(existingUser.roles[i]);
                     }
-
+                    res.setHeader('Authorization', `Bearer ${token}`);
                     res.status(200).send({
                         id: existingUser._id,
                         username: existingUser.username,
