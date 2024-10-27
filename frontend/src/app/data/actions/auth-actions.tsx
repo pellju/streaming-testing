@@ -18,22 +18,18 @@ export async function loginAction (formData: FormData) {
             "password": password,
         };
 
-        // Create a try-catch
-
         try {
             const response = await axios.post(loginUrl, data);
-            console.log("responseData:");
             const responseData = response.data;
-            console.log(responseData)
             const token = `Bearer ${responseData.token}`;
+            sessionStorage.setItem('auth_token', token); //Setting the Bearer-token to SessionStorage!
+
             return token;
         } catch (e: any) {
             console.log("Error!");
             console.log(e.err);
             return null;
-        }
-
-        
+        }       
     }
 }
 
