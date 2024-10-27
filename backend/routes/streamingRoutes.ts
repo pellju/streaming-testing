@@ -2,12 +2,13 @@ import express, {Router} from 'express';
 
 import { addStream, listStreamNames, removeStream } from '../controllers/streamController';
 import { isAdmin } from '../middlewares/authJwt';
+import { checkIfTokenIsValid } from '../middlewares/authJwt';
 
 const streamingRouter: Router = express.Router();
 
 streamingRouter.post('/newstream', isAdmin, addStream);
 
-streamingRouter.get('/streams', listStreamNames);
+streamingRouter.get('/streams', listStreamNames, checkIfTokenIsValid);
 
 streamingRouter.delete('/remove/:name', isAdmin, removeStream);
 

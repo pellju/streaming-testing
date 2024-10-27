@@ -83,6 +83,8 @@ const listStreamNames = async (req: Request, res: Response, next: NextFunction) 
     if (streamsFromDatabase.length === 0 || !streamsFromDatabase) {
         res.send({ "items": [] });
     } else {
+
+        //ToDo: Check here from the request that what is the auth-token, get the user from it, and fetch all the proper streams
         const streamList = streamsFromDatabase.map(item => item.name);
         res.send({ "items": streamList });
     }

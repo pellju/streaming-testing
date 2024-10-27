@@ -154,4 +154,28 @@ const isUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
     }
 };
 
-export { isAdmin, isFulluser, isUser }
+const checkIfTokenIsValid = async(req: Request, res: Response, next: NextFunction) => {
+    if (!req.headers || !req.headers.authorization) {
+        return res.status(400).json({ 'Error': 'Token missing' });
+    } else {
+        try {
+            const token: string = req.headers.authorization.toString();
+            const extractedToken: string = token.split("Bearer ")[1];
+            jwt.verify(extractedToken, JWT_SECRET, (err: any, decoded: any) => {
+                if (err) {
+                    throw new Error("Unauthorized");
+                } else {
+                    // Forwarding headers etc. to the controller so that the controller/service can accesse the auth-token to "read the user".
+                    next();
+                    return ;
+                }
+            });
+        } catch (e: any) {
+            console.log("Error!");
+            console.log(e.message);
+            res.status(500).json({ 'Error': "An unknown authorization token detected!" });
+        }
+    } 
+}
+
+export { isAdmin, isFulluser, isUser, checkIfTokenIsValid }
