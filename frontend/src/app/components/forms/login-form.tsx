@@ -1,9 +1,34 @@
-import { loginAction } from "@/app/data/actions/auth-actions"
+"use client"
+
+import { useState } from "react";
+import { loginAction } from "@/app/data/actions/server-auth-actions"
 
 export function LoginForm() {
+
+    const [token, setToken] = useState<string | null>(null);
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+
+        event.preventDefault();
+
+        console.log("handlesubmit")
+        const formData = new FormData(event.currentTarget);
+        console.log("usertoken");
+        const userToken = await loginAction(formData);
+        console.log(userToken);
+
+        if (userToken) {
+            setToken(userToken);
+            sessionStorage.setItem("auth_token", userToken);
+            console.log("setting done");
+        } else {
+            console.log("setting failed");
+        }
+    }
+
     return (
         <div>
-            <form action={loginAction}>
+            <form onSubmit={handleSubmit}>
 
                 <div id="login">
 

@@ -22,17 +22,17 @@ export async function loginAction (formData: FormData) {
             const response = await axios.post(loginUrl, data);
             const responseData = response.data;
             const token = `Bearer ${responseData.token}`;
-            sessionStorage.setItem('auth_token', token); //Setting the Bearer-token to SessionStorage!
-
+            
             return token;
         } catch (e: any) {
-            console.log("Error!");
+            console.log("Error while logging in!");
             console.log(e.err);
             return null;
         }       
     }
 }
 
+// registerAction should be fix according to loginAction
 export async function registerAction (formData: FormData) {
     const username: string|undefined = formData.get('username')?.toString();
     const password: string|undefined = formData.get('password')?.toString();
