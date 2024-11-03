@@ -4,7 +4,8 @@ import axios from "axios";
 
 export async function StreamFetcher() {
     // Figure out the best way of fetching user's streams
-    const userToken = sessionStorage.getItem('auth_token');
+    // The following has to be fetched from the client (i.e. in a file where "use client")
+    const userToken = window.sessionStorage.getItem('auth_token');
 
     const baseURL = process.env.BACKEND_ADDRESS; // Includes the last "/"
     const streamURL = baseURL + 'streams';
