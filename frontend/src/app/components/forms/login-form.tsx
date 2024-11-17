@@ -11,18 +11,12 @@ export function LoginForm() {
 
         event.preventDefault();
 
-        console.log("handlesubmit")
         const formData = new FormData(event.currentTarget);
-        console.log("usertoken");
         const userToken = await loginAction(formData);
-        console.log(userToken);
 
         if (userToken) {
             setToken(userToken);
             sessionStorage.setItem("auth_token", userToken);
-            console.log("setting done");
-        } else {
-            console.log("setting failed");
         }
     }
 
