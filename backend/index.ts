@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import path from 'path';
 import session from 'express-session';
+import cookieParser from 'cookie-parser';
 
 import { apiCheckerMiddleware } from './middlewares/streamingMiddleware';
 import { streamingRouter } from './routes/streamingRoutes';
@@ -46,6 +47,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use(streamingRouter);
 app.use(userRouter);
+app.use(cookieParser());
 
 app.listen(3000, () => {
     console.log("Server is running at http://127.0.0.1:3000 !");

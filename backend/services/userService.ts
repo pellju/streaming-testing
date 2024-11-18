@@ -94,19 +94,25 @@ const login = async (req: Request, res: Response) => {
                     res.status(500).json({ "Error": "A serverside error!" });
                 } else {
                     const token = jwt.sign({ id: existingUser._id }, process.env.COOKIETOKENSECRET, {algorithm: 'HS256', allowInsecureKeySizes: true, expiresIn: 3600,});
-                    req.session.token = { key: token };
+                    //req.session.token = { key: token };
 
                     const roles = [];
                     for (let i = 0; i < existingUser.roles.length; i++) {
                         roles.push(existingUser.roles[i]);
                     }
-                    res.setHeader('Authorization', `Bearer ${token}`);
+                    //res.setHeader('Authorization', `Bearer ${token}`);
+
+                    if (process.env.ENVIRONMENT == "DEV") { // Checking if this is about development environment -> allowing setting the cookie using HTTP
+                        res.cookie('auth_token', token, { httpOnly: true, sameSite: 'strict', maxAge: 60 * 60 * 1000 })
+                    } else {
+                        res.cookie('auth_token', token, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 60 * 60 * 1000 })
+                    }
+                    
                     res.status(200).send({
                         id: existingUser._id,
                         username: existingUser.username,
                         roles: roles,
                         apikey: existingUser.apikey,
-                        token: token
                     });
                 }
             }
