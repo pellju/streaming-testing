@@ -127,9 +127,12 @@ const login = async (req: Request, res: Response) => {
 
 const logout = async(req: Request, res: Response) => {
     try {
-
-        if (req.session.token) {
-            req.session.token = { key: null };
+        if (req.cookies.auth_token) {
+            if (process.env.ENVIRONMENT == "DEV") {
+                res.clearCookie('auth_token', { httpOnly: true, sameSite: 'strict'});
+            } else {
+                res.clearCookie('auth_token', { httpOnly: true, secure: true, sameSite: 'strict'});
+            }
             return res.send({ 'Information': 'Logout successful' });
         } else {
             return res.send({ 'Information': 'Logout failed: not logged in.' });

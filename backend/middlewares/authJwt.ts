@@ -27,11 +27,11 @@ declare module 'express-session' {
 
 const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
-    if (!req.headers || !req.headers.authorization) {
+    if (!req.cookies || !req.cookies.auth_token) {
         return res.status(400).json({ 'Error': 'Token missing' });
     } else {
         try {
-            const token: string = req.headers.authorization.toString();
+            const token: string = req.cookies.auth_token.toString();
             const extractedToken: string = token.split("Bearer ")[1];
             let user: userObjectContainingId = {id: null};
             jwt.verify(extractedToken, JWT_SECRET, (err: any, decoded: any) => {
@@ -70,11 +70,11 @@ const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
 const isFulluser = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
-    if (!req.headers || !req.headers.authorization) {
+    if (!req.cookies || !req.cookies.auth_token) {
         return res.status(400).json({ 'Error': 'Token missing' });
     } else {
         try {
-            const token: string = req.headers.authorization.toString();
+            const token: string = req.cookies.auth_token.toString();
             const extractedToken: string = token.split("Bearer ")[1]
             let user: userObjectContainingId = {id: null};
             jwt.verify(extractedToken, JWT_SECRET, (err: any, decoded: any) => {
@@ -113,11 +113,11 @@ const isFulluser = async (req: AuthRequest, res: Response, next: NextFunction) =
 
 const isUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
-    if (!req.headers || !req.headers.authorization) {
+    if (!req.cookies || !req.cookies.auth_token) {
         return res.status(400).json({ 'Error': 'Token missing' });
     } else {
         try {
-            const token: string = req.headers.authorization.toString();
+            const token: string = req.cookies.auth_token.toString();
             const extractedToken: string = token.split("Bearer ")[1]
             let user: userObjectContainingId = {id: null};
             jwt.verify(extractedToken, JWT_SECRET, (err: any, decoded: any) => {
@@ -155,11 +155,11 @@ const isUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
 };
 
 const checkIfTokenIsValid = async(req: Request, res: Response, next: NextFunction) => {
-    if (!req.headers || !req.headers.authorization) {
+    if (!req.cookies || !req.cookies.auth_token) {
         return res.status(400).json({ 'Error': 'Token missing' });
     } else {
         try {
-            const token: string = req.headers.authorization.toString();
+            const token: string = req.cookies.auth_token.toString();
             const extractedToken: string = token.split("Bearer ")[1];
             jwt.verify(extractedToken, JWT_SECRET, (err: any, decoded: any) => {
                 if (err) {
