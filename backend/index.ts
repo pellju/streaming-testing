@@ -18,6 +18,7 @@ require('dotenv').config();
 
 // Creating a new Express-server and allowing /stream-paths to access streams-folder (statically)
 const app: Express = express();
+app.use(cookieParser());
 app.use(express.json());
 
 if (!process.env.COOKIETOKENSECRET) {
@@ -47,7 +48,6 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use(streamingRouter);
 app.use(userRouter);
-app.use(cookieParser());
 
 app.listen(3000, () => {
     console.log("Server is running at http://127.0.0.1:3000 !");

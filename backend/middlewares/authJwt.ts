@@ -28,7 +28,8 @@ declare module 'express-session' {
 const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
     if (!req.cookies || !req.cookies.auth_token) {
-        return res.status(400).json({ 'Error': 'Token missing' });
+        console.log(req.cookies);
+        return res.status(401).json({ 'Error': 'Token missing' });
     } else {
         try {
             const token: string = req.cookies.auth_token.toString();
@@ -71,7 +72,7 @@ const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
 const isFulluser = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
     if (!req.cookies || !req.cookies.auth_token) {
-        return res.status(400).json({ 'Error': 'Token missing' });
+        return res.status(401).json({ 'Error': 'Token missing' });
     } else {
         try {
             const token: string = req.cookies.auth_token.toString();
@@ -114,7 +115,7 @@ const isFulluser = async (req: AuthRequest, res: Response, next: NextFunction) =
 const isUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
     if (!req.cookies || !req.cookies.auth_token) {
-        return res.status(400).json({ 'Error': 'Token missing' });
+        return res.status(401).json({ 'Error': 'Token missing' });
     } else {
         try {
             const token: string = req.cookies.auth_token.toString();
@@ -156,7 +157,7 @@ const isUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
 const checkIfTokenIsValid = async(req: Request, res: Response, next: NextFunction) => {
     if (!req.cookies || !req.cookies.auth_token) {
-        return res.status(400).json({ 'Error': 'Token missing' });
+        return res.status(401).json({ 'Error': 'Token missing' });
     } else {
         try {
             const token: string = req.cookies.auth_token.toString();

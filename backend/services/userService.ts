@@ -103,9 +103,9 @@ const login = async (req: Request, res: Response) => {
                     //res.setHeader('Authorization', `Bearer ${token}`);
 
                     if (process.env.ENVIRONMENT == "DEV") { // Checking if this is about development environment -> allowing setting the cookie using HTTP
-                        res.cookie('auth_token', token, { httpOnly: true, sameSite: 'strict', maxAge: 60 * 60 * 1000 })
+                        res.cookie('auth_token', `Bearer ${token}`, { httpOnly: true, sameSite: 'strict', maxAge: 60 * 60 * 1000 })
                     } else {
-                        res.cookie('auth_token', token, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 60 * 60 * 1000 })
+                        res.cookie('auth_token', `Bearer ${token}`, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 60 * 60 * 1000 })
                     }
                     
                     res.status(200).send({
@@ -179,11 +179,11 @@ const editUser = async(req: Request, res: Response) => {
 const renewingAPIkey = async (req: Request, res: Response) => {
     // The idea is that the user can renew their API-key using this function.
     // Basically, the authorization has been done already at this point
-    if (!req.headers || !req.headers.authorization) {
-        return res.status(400).json({ 'Error': 'Token missing' });
+    if (!req.cookies || !req.cookies.auth_token) {
+        return res.status(401).json({ 'Error': 'Token missing' });
     } else {
         try {
-            const userID: string | null = extractUserFromToken(req.headers.authorization.toString());
+            const userID: string | null = extractUserFromToken(req.cookies.auth_token.toString());
             if (!userID) {
                 return res.status(500).json({ "Error": "Error with the authorization "});
             } else {
