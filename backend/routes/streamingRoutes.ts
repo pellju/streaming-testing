@@ -8,7 +8,7 @@ const streamingRouter: Router = express.Router();
 
 streamingRouter.post('/newstream', isAdmin, addStream);
 
-streamingRouter.get('/streams', listStreamNames, checkIfTokenIsValid);
+streamingRouter.get('/streams', checkIfTokenIsValid, listStreamNames);
 
 streamingRouter.delete('/remove/:name', isAdmin, removeStream);
 
