@@ -3,11 +3,12 @@
 import axios from "axios";
 
 export async function loginAction (formData: FormData) {
+
     const username: string|undefined = formData.get('username')?.toString();
     const password: string|undefined = formData.get('password')?.toString();
 
     if (!username || !password) {
-        return null;
+        return { success: false, message: "Username or password missing" };
     } else {
 
         const baseURL = process.env.BACKEND_ADDRESS; // Includes the last "/"
@@ -21,13 +22,12 @@ export async function loginAction (formData: FormData) {
         try {
             const response = await axios.post(loginUrl, data);
             const responseData = response.data;
-            const token = `Bearer ${responseData.token}`;
-            
-            return token;
+
+            return { success: true, message: "Success!" };
         } catch (e: any) {
             console.log("Error while logging in!");
             console.log(e.err);
-            return null;
+            return { success: false, message: "Username or password incorrect" };
         }       
     }
 }

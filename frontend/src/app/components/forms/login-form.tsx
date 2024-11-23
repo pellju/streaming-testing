@@ -1,28 +1,31 @@
 "use client"
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { loginAction } from "@/app/data/actions/server-auth-actions"
 
 export function LoginForm() {
 
-    const [token, setToken] = useState<string | null>(null);
+    const router = useRouter();
+    const [errorMessage, setErrorMessage] = useState("");
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
-        const userToken = await loginAction(formData);
+        const {success, message} = await loginAction(formData);
 
-        if (userToken) {
-            setToken(userToken);
-            sessionStorage.setItem("auth_token", userToken);
+        if (success) {
+            router.push("/frontpage");
+        } else {
+            setErrorMessage(message);
         }
     }
 
     return (
         <div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} method="POST">
 
                 <div id="login">
 
