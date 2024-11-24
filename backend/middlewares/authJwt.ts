@@ -156,6 +156,7 @@ const isUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
 };
 
 const checkIfTokenIsValid = async(req: Request, res: Response, next: NextFunction) => {
+    console.log(req.cookies);
     if (!req.cookies || !req.cookies.auth_token) {
         return res.status(401).json({ 'Error': 'Token missing' });
     } else {

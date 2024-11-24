@@ -1,6 +1,9 @@
 # Ignoring streams
 streams/
 
+# Ignoring local TLS-certificates:
+certificates/
+
 # Logs
 logs
 *.log

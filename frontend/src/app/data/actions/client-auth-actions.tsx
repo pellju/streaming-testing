@@ -19,8 +19,7 @@ export async function clientLoginAction (formData: FormData) {
         };
 
         try {
-            const response = await axios.post(loginUrl, data, { withCredentials: true });
-            console.log(response.data);
+            await axios.post(loginUrl, data, { withCredentials: true });
 
             return { success: true, message: "Success!" };
         } catch (e: any) {

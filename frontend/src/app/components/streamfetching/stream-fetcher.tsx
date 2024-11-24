@@ -1,6 +1,5 @@
-"use server";
-
 import axios from "axios";
+import https from 'https';
 
 export async function StreamFetcher() {
     // Figure out the best way of fetching user's streams
@@ -10,8 +9,20 @@ export async function StreamFetcher() {
     const streamURL = baseURL + 'streams';
 
     try {
-        console.log("ennen fetchausta");
-        const response = await axios.get(streamURL);
+        console.log(process.env.ENV);
+
+        let response = null;
+
+        if (process.env.ENV == 'DEV') {
+            console.log("Ignoring self-signed TLS-certificates");
+            console.log(streamURL);
+            const httpsAgent = new https.Agent({ rejectUnauthorized: false });
+            response = await axios.get(streamURL, { withCredentials: true, httpsAgent });
+        } else {
+            response = await axios.get(streamURL, { withCredentials: true });
+        }
+
+        
         console.log("fetchauksen jälkeen");
 
         const data = await response.data;
@@ -24,9 +35,14 @@ export async function StreamFetcher() {
     } catch (e: any) {
         console.log("Error!");
         console.log("====");
-        console.log(e.response.status);
-        if (e.response.status == 401) {
-            return { redirect: { destination: '/login', permanent: false }};
+        if (e.response) {
+            console.log("Status: ", e.response.status);
+            console.log("Data:", e.response.data);
+            console.log("Headers:", e.response.headers);
+        } else if (e.request) {
+            console.log("No response. Request: ", e.request);
+        } else {
+            console.log(e.message);
         }
         console.log("====");
         return null;

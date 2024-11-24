@@ -11,6 +11,10 @@ import { userRouter } from './routes/userRoutes';
 // For connecting to the database:
 import { db } from './models';
 
+// Importing https and fs for DEVELOPMENT-ENVIRONMENT TLS:
+import fs from 'fs';
+import https from 'https';
+
 require('dotenv').config();
 
 (async () => {
@@ -31,14 +35,14 @@ if (!process.env.COOKIETOKENSECRET) {
     process.exit(1);
 }
 
-app.use(session({
+/*app.use(session({
     secret: process.env.COOKIETOKENSECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
         secure: false
     }
-}));
+}));*/
 
 app.use('/secretstream/:apikey', apiCheckerMiddleware, express.static(path.join(__dirname, 'streams')));
 if (process.env.ENVIRONMENT == "DEV") {
@@ -54,6 +58,19 @@ app.get('/', (req: Request, res: Response) => {
 app.use(streamingRouter);
 app.use(userRouter);
 
+if (process.env.ENVIRONMENT == "DEV") {
+
+    const options = {
+        key: fs.readFileSync('./certificates/server.key'),
+        cert: fs.readFileSync('./certificates/server.crt')
+    }
+
+    https.createServer(options, app).listen(3000, () => {
+        console.log("Server is running at https://127.0.0.1:3000 !");
+    })
+} else {
 app.listen(3000, () => {
     console.log("Server is running at http://127.0.0.1:3000 !");
 });
+}
+
