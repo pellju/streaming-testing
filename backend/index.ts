@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import path from 'path';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 import { apiCheckerMiddleware } from './middlewares/streamingMiddleware';
 import { streamingRouter } from './routes/streamingRoutes';
@@ -19,6 +20,10 @@ require('dotenv').config();
 // Creating a new Express-server and allowing /stream-paths to access streams-folder (statically)
 const app: Express = express();
 app.use(cookieParser());
+app.use(cors({
+    origin: process.env.FRONTEND_DOMAIN,
+    credentials: true
+}));
 app.use(express.json());
 
 if (!process.env.COOKIETOKENSECRET) {

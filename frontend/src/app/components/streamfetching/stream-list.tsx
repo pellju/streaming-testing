@@ -2,7 +2,7 @@
 
 import React from "react";
 
-export async function StreamListing({ data }) {
+export async function StreamListing() {
  
     const streamList: any[] = ['test'];
 
