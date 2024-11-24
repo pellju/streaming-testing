@@ -1,4 +1,4 @@
-"use server";
+//"use server";
 
 import axios from "axios";
 
@@ -11,7 +11,7 @@ export async function loginAction (formData: FormData) {
         return { success: false, message: "Username or password missing" };
     } else {
 
-        const baseURL = process.env.BACKEND_ADDRESS; // Includes the last "/"
+        const baseURL = process.env.NEXT_PUBLIC_BACKEND_ADDRESS; // Includes the last "/"
         const loginUrl = baseURL + 'login';
 
         const data = {
@@ -20,8 +20,7 @@ export async function loginAction (formData: FormData) {
         };
 
         try {
-            const response = await axios.post(loginUrl, data);
-            const responseData = response.data;
+            const response = await axios.post(loginUrl, data, { withCredentials: true });
 
             return { success: true, message: "Success!" };
         } catch (e: any) {
@@ -49,7 +48,7 @@ export async function registerAction (formData: FormData) {
 
         console.log("everything works");
         
-        const baseURL = process.env.BACKEND_ADDRESS; // Includes the last "/"
+        const baseURL = process.env.NEXT_PUBLIC_BACKEND_ADDRESS; // Includes the last "/"
         const registerUrl = baseURL + 'register';
 
         const data = {

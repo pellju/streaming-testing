@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { loginAction } from "@/app/data/actions/server-auth-actions"
+//import { loginAction } from "@/app/data/actions/server-auth-actions"
+import { clientLoginAction } from "@/app/data/actions/client-auth-actions";
+
 
 export function LoginForm() {
 
@@ -14,7 +16,8 @@ export function LoginForm() {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
-        const {success, message} = await loginAction(formData);
+        //const {success, message} = await loginAction(formData);
+        const {success, message} = await clientLoginAction(formData);
 
         if (success) {
             router.push("/frontpage");

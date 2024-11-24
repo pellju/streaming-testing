@@ -6,7 +6,7 @@ export async function StreamFetcher() {
     // Figure out the best way of fetching user's streams
     // The following has to be fetched from the client (i.e. in a file where "use client")
 
-    const baseURL = process.env.BACKEND_ADDRESS; // Includes the last "/"
+    const baseURL = process.env.NEXT_PUBLIC_BACKEND_ADDRESS; // Includes the last "/"
     const streamURL = baseURL + 'streams';
 
     try {
@@ -24,7 +24,7 @@ export async function StreamFetcher() {
     } catch (e: any) {
         console.log("Error!");
         console.log("====");
-        console.log(e.response.data);
+        console.log(e.response.status);
         if (e.response.status == 401) {
             return { redirect: { destination: '/login', permanent: false }};
         }

@@ -103,10 +103,12 @@ const login = async (req: Request, res: Response) => {
                     //res.setHeader('Authorization', `Bearer ${token}`);
 
                     if (process.env.ENVIRONMENT == "DEV") { // Checking if this is about development environment -> allowing setting the cookie using HTTP
-                        res.cookie('auth_token', `Bearer ${token}`, { httpOnly: true, sameSite: 'strict', maxAge: 60 * 60 * 1000 })
+                        res.cookie('auth_token', `Bearer ${token}`, { httpOnly: true, sameSite: 'lax', maxAge: 60 * 60 * 1000, path: '/', secure: false });
                     } else {
-                        res.cookie('auth_token', `Bearer ${token}`, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 60 * 60 * 1000 })
+                        res.cookie('auth_token', `Bearer ${token}`, { httpOnly: true, secure: true, sameSite: 'lax', maxAge: 60 * 60 * 1000 });
                     }
+
+                    console.log("Headers: ", res.getHeaders());
                     
                     res.status(200).send({
                         id: existingUser._id,
@@ -129,9 +131,9 @@ const logout = async(req: Request, res: Response) => {
     try {
         if (req.cookies.auth_token) {
             if (process.env.ENVIRONMENT == "DEV") {
-                res.clearCookie('auth_token', { httpOnly: true, sameSite: 'strict'});
+                res.clearCookie('auth_token', { httpOnly: true, sameSite: 'lax'});
             } else {
-                res.clearCookie('auth_token', { httpOnly: true, secure: true, sameSite: 'strict'});
+                res.clearCookie('auth_token', { httpOnly: true, secure: true, sameSite: 'lax'});
             }
             return res.send({ 'Information': 'Logout successful' });
         } else {
