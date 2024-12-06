@@ -100,20 +100,22 @@ const login = async (req: Request, res: Response) => {
                     for (let i = 0; i < existingUser.roles.length; i++) {
                         roles.push(existingUser.roles[i]);
                     }
-                    //res.setHeader('Authorization', `Bearer ${token}`);
+                    const bearerToken: string = `Bearer ${token}`;
+                    res.setHeader('Authorization', `${bearerToken}`);
 
-                    if (process.env.ENVIRONMENT == "DEV") { // Checking if this is about development environment -> allowing setting the cookie using HTTP
+                    /*if (process.env.ENVIRONMENT == "DEV") { // Checking if this is about development environment -> allowing setting the cookie using HTTP
                         console.log("development environment cookie set!");
                         res.cookie('auth_token', `Bearer ${token}`, { httpOnly: true, sameSite: 'none', maxAge: 60 * 60 * 1000, path: '/', secure: true, domain: '.localhost' });
                     } else {
                         res.cookie('auth_token', `Bearer ${token}`, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 60 * 60 * 1000 });
-                    }
+                    }*/
                     
                     res.status(200).send({
                         id: existingUser._id,
                         username: existingUser.username,
                         roles: roles,
                         apikey: existingUser.apikey,
+                        token: bearerToken
                     });
                 }
             }
@@ -126,6 +128,7 @@ const login = async (req: Request, res: Response) => {
     }
 }
 
+// This needs to be re-written!
 const logout = async(req: Request, res: Response) => {
     try {
         if (req.cookies.auth_token) {
