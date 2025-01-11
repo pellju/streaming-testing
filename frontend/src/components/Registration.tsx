@@ -29,6 +29,7 @@ const Registration: React.FC<RegistrationProps> = ({ regUsername, setRegUsername
                     <div>
                         Invitecode: <input type='text' value={regInvite} name='regPassword' onChange={({target}) => setRegInvite(target.value)}/>
                     </div>
+                    <br />
                     <button id='registration-button' type='submit'>Register</button>
             </form>
         </div>

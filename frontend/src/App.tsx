@@ -63,20 +63,26 @@ function App() {
   
  if (loggedIn) {
   return (
-    <div>
-      <center>You have logged in successfully!</center>
+    <div className='hero'>
+      <div className='container'>
+        <center>You have logged in successfully!</center>
+      </div>
     </div>
    )
  } else {
   return (
     <div>
-      <h2><center>Hello world, and welcome!</center></h2>
-      <center><b>Login:</b></center>
-      <Login loginUsername={loginUsername} setLoginUsername={setLoginUsername} loginPassword={loginPassword} setLoginPassword={setLoginPassword} handleLogin={handlingLogin}/>
-      <br />
-      <br />
-      <center><b>Registyration:</b></center>
-      <Registration regUsername={regUsername} setRegUsername={setRegUsername} regPassword={regPassword} setRegPassword={setRegPassword} confRegPassword={confRegPassword} setConfRegPassword={setConfRegPassword} regInvite={regInvite} setRegInvite={setRegInvite} handleRegistration={handlingRegistration} />
+      <div className='hero'>
+        <div className='container'>
+          <h1>Hello world, and welcome!</h1>
+          <b>Login:</b>
+          <Login loginUsername={loginUsername} setLoginUsername={setLoginUsername} loginPassword={loginPassword} setLoginPassword={setLoginPassword} handleLogin={handlingLogin}/>
+          <br />
+          <br />
+          <b>Registeration:</b>
+          <Registration regUsername={regUsername} setRegUsername={setRegUsername} regPassword={regPassword} setRegPassword={setRegPassword} confRegPassword={confRegPassword} setConfRegPassword={setConfRegPassword} regInvite={regInvite} setRegInvite={setRegInvite} handleRegistration={handlingRegistration} />
+        </div>
+      </div>
     </div>
    )
  }

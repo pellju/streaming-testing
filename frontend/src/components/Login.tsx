@@ -19,6 +19,7 @@ const Login: React.FC<RegistrationProps> = ({ loginUsername, setLoginUsername, l
                     <div>
                         Password: <input type='password' value={loginPassword} name='loginPassword' onChange={({target}) => setLoginPassword(target.value)}/>
                     </div>
+                    <br />
                     <button id='login-button' type='submit'>Login</button>
             </form>
         </div>
