@@ -4,9 +4,12 @@ import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  //const [count, setCount] = useState(0);
+  const [loggedIn, setLoggedIn] = useState(null);
+  const [showLogin, setShowLogin] = useState<boolean>(false);
+  const [showRegister, setShowRegister] = useState<boolean>(false);
 
-  return (
+  /*return (
     <>
       <div>
         <a href="https://vite.dev" target="_blank">
@@ -29,7 +32,12 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
     </>
-  )
+  )*/
+ return (
+  <div>
+    <center>Hello world!</center>
+  </div>
+ )
 }
 
 export default App
