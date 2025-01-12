@@ -49,8 +49,6 @@ if (process.env.ENVIRONMENT == "DEV") {
     app.use('/stream', express.static(path.join(__dirname, 'streams')));
 }
 
-
-
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello world!');
 });
@@ -58,7 +56,7 @@ app.get('/', (req: Request, res: Response) => {
 app.use(streamingRouter);
 app.use(userRouter);
 
-if (process.env.ENVIRONMENT == "DEV") {
+/*if (process.env.ENVIRONMENT == "DEV") {
 
     const options = {
         key: fs.readFileSync('./certificates/server.key'),
@@ -68,9 +66,9 @@ if (process.env.ENVIRONMENT == "DEV") {
     https.createServer(options, app).listen(3000, () => {
         console.log("Server is running at https://127.0.0.1:3000 !");
     })
-} else {
+} else {*/
 app.listen(3000, () => {
     console.log("Server is running at http://127.0.0.1:3000 !");
 });
-}
+//}
 

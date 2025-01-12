@@ -105,7 +105,7 @@ const login = async (req: Request, res: Response) => {
 
                     if (process.env.ENVIRONMENT == "DEV") { // Checking if this is about development environment -> allowing setting the cookie using HTTP
                         console.log("Setting development environment cookie!");
-                        res.cookie('auth_token', `Bearer ${token}`, { httpOnly: true, secure: false, sameSite: 'strict', maxAge: 60 * 60 * 1000 });
+                        res.cookie('auth_token', `Bearer ${token}`, { httpOnly: true, secure: false, sameSite: 'lax', maxAge: 60 * 60 * 1000 });
                     } else {
                         res.cookie('auth_token', `Bearer ${token}`, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 60 * 60 * 1000 });
                     }

@@ -11,8 +11,9 @@ if (!import.meta.env.VITE_BACKENDURL) {
 import Registration from './components/Registration'
 import Login from './components/Login'
 
-// Importing userService
+// Importing services
 import userservice from './services/userservice';
+import streamservice from './services/streamservice';
 
 function App() {
   // Account-related management
@@ -71,6 +72,9 @@ function App() {
       setRegPassword('');
       setConfRegPassword('');
       setRegInvite('');
+
+      const streamResponse = await streamservice.fetchStreams();
+      console.log(streamResponse);
 
     } catch (e: unknown) {
 
