@@ -3,24 +3,16 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+if (!import.meta.env.VITE_BACKENDURL) {
+  console.log("Backend-url not set!");
+}
+
 // Importing Registration and Login form
 import Registration from './components/Registration'
 import Login from './components/Login'
 
-type UsernameProps = {
-  value: string,
-  setValue: React.Dispatch<React.SetStateAction<string>>;
-}
-
-type PasswordProps = {
-  value: string,
-  setValue: React.Dispatch<React.SetStateAction<string>>;
-}
-
-type InviteProps = {
-  value: string,
-  setValue: React.Dispatch<React.SetStateAction<string>>;
-}
+// Importing userService
+import userservice from './services/userservice';
 
 function App() {
   //const [count, setCount] = useState(0);
@@ -45,11 +37,21 @@ function App() {
   const handlingRegistration = async (event: any) => {
     event.preventDefault();
 
-    console.log("handlingRegistration...");
-    setRegUsername('');
-    setRegPassword('');
-    setConfRegPassword('');
-    setRegInvite('');
+    try {
+      const request = await userservice.registration({ username: regUsername, password: regPassword, invitecode: regInvite});
+      console.log(request);
+
+      setRegUsername('');
+      setRegPassword('');
+      setConfRegPassword('');
+      setRegInvite('');
+    } catch (e: unknown) {
+      console.log("Error handling the registration!");
+      setRegUsername('');
+      setRegPassword('');
+      setConfRegPassword('');
+      setRegInvite('');
+    }
   }
 
   const handlingLogin = async (event: any) => {
