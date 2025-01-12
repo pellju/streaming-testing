@@ -57,6 +57,25 @@ function App() {
   const handlingLogin = async (event: any) => {
     event.preventDefault();
 
+    try {
+      const request = await userservice.login({ username: loginUsername, password: loginPassword});
+      console.log(request);
+
+      setRegUsername('');
+      setRegPassword('');
+      setConfRegPassword('');
+      setRegInvite('');
+
+    } catch (e: unknown) {
+
+      console.log("Error handling the registration!");
+      setRegUsername('');
+      setRegPassword('');
+      setConfRegPassword('');
+      setRegInvite('');
+
+    }
+
     console.log("handlingLogin...");
     setLoginUsername('');
     setLoginPassword('');

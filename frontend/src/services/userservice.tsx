@@ -9,4 +9,9 @@ const registration = async(data: any) => {
     return response.data;
 }
 
-export default { registration }
+const login = async(data: any) => {
+    const response = await axios.post(loginUrl, data);
+    return response.data;
+}
+
+export default { registration, login }
