@@ -35,14 +35,14 @@ if (!process.env.COOKIETOKENSECRET) {
     process.exit(1);
 }
 
-/*app.use(session({
+app.use(session({
     secret: process.env.COOKIETOKENSECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
         secure: false
     }
-}));*/
+}));
 
 app.use('/secretstream/:apikey', apiCheckerMiddleware, express.static(path.join(__dirname, 'streams')));
 if (process.env.ENVIRONMENT == "DEV") {

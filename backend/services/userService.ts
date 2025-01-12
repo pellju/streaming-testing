@@ -103,19 +103,19 @@ const login = async (req: Request, res: Response) => {
                     const bearerToken: string = `Bearer ${token}`;
                     res.setHeader('Authorization', `${bearerToken}`);
 
-                    /*if (process.env.ENVIRONMENT == "DEV") { // Checking if this is about development environment -> allowing setting the cookie using HTTP
-                        console.log("development environment cookie set!");
-                        res.cookie('auth_token', `Bearer ${token}`, { httpOnly: true, sameSite: 'none', maxAge: 60 * 60 * 1000, path: '/', secure: true, domain: '.localhost' });
+                    if (process.env.ENVIRONMENT == "DEV") { // Checking if this is about development environment -> allowing setting the cookie using HTTP
+                        console.log("Setting development environment cookie!");
+                        res.cookie('auth_token', `Bearer ${token}`, { httpOnly: true, secure: false, sameSite: 'strict', maxAge: 60 * 60 * 1000 });
                     } else {
                         res.cookie('auth_token', `Bearer ${token}`, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 60 * 60 * 1000 });
-                    }*/
+                    }
                     
                     res.status(200).send({
                         id: existingUser._id,
                         username: existingUser.username,
                         roles: roles,
                         apikey: existingUser.apikey,
-                        token: bearerToken
+                        //token: bearerToken
                     });
                 }
             }

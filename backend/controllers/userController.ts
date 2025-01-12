@@ -28,7 +28,7 @@ const userRegistration = async (req: Request, res: Response) => {
                 // Checking if the given invite is is valid (or if the number of existing users is larger than 0 meaning that first user can be done without invite)
                 const numberOfUsers = await User.countDocuments({});
                 const inviteCheck = await removeInvite(invitecode);
-                if (!inviteCheck && numberOfUsers > 0) {
+                if (!inviteCheck && numberOfUsers > 100) { //temporary 100
                     res.status(400).json({ 'Error': 'Invite incorrect!' });
                 } else {
                     // In case everything works, forwarding the request to service handling the signup
