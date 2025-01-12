@@ -15,16 +15,18 @@ import Login from './components/Login'
 import userservice from './services/userservice';
 
 function App() {
-  //const [count, setCount] = useState(0);
+  // Account-related management
   const [loggedIn, setLoggedIn] = useState(null);
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [showRegister, setShowRegister] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false); // ToDo: Also, create a new view for admin-related things, i.e. managing streams and handling users and invites
 
   // Adding registration values:
   const [regUsername, setRegUsername] = useState<string>('');
   const [regPassword, setRegPassword] = useState<string>('');
   const [confRegPassword, setConfRegPassword] = useState<string>('');
   const [regInvite, setRegInvite] = useState<string>('');
+  const [infoMessage, setInfoMessage] = useState<string>('');
   // regUsername setRegUsername regPassword setRegPassword confRegPassword setConfRegPassword regInvite setRegInvite
 
   // Adding login values:
@@ -39,6 +41,7 @@ function App() {
 
     try {
       const request = await userservice.registration({ username: regUsername, password: regPassword, invitecode: regInvite});
+      // ToDo: Check request response and create a info message banner if succeed or not
       console.log(request);
 
       setRegUsername('');
@@ -61,6 +64,9 @@ function App() {
       const request = await userservice.login({ username: loginUsername, password: loginPassword});
       console.log(request);
 
+      // ToDo: Check here if user is admin or not and if true, change the status
+      // To do that create a new endpoint, or check the groups the response above returns.
+
       setRegUsername('');
       setRegPassword('');
       setConfRegPassword('');
@@ -81,7 +87,7 @@ function App() {
     setLoginPassword('');
   }
 
-  
+  // ToDo: Create a toggle which shows registration- and login-forms
  if (loggedIn) {
   return (
     <div className='hero'>
