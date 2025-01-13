@@ -12,8 +12,8 @@ import { userRouter } from './routes/userRoutes';
 import { db } from './models';
 
 // Importing https and fs for DEVELOPMENT-ENVIRONMENT TLS:
-import fs from 'fs';
-import https from 'https';
+//import fs from 'fs';
+//import https from 'https';
 
 require('dotenv').config();
 
