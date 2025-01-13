@@ -15,12 +15,17 @@ import Login from './components/Login'
 import userservice from './services/userservice';
 import streamservice from './services/streamservice';
 
+import Streamlist from './components/Streamlist';
+
 function App() {
   // Account-related management
-  const [loggedIn, setLoggedIn] = useState(null);
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [showRegister, setShowRegister] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false); // ToDo: Also, create a new view for admin-related things, i.e. managing streams and handling users and invites
+  const [userApiKey, setUserApiKey] = useState<string>('');
+  const [userData, setUserData] = useState(null); // ToDo: Defined userData what's included/required
+  const [userStreams, setUserStreams] = useState<any[]>([]); // ToDo, add types of streams here too
 
   // Adding registration values:
   const [regUsername, setRegUsername] = useState<string>('');
@@ -65,6 +70,10 @@ function App() {
       const request = await userservice.login({ username: loginUsername, password: loginPassword});
       console.log(request);
 
+      // ToDo: Implement a check that if the request is successfull (ensure that it's fine)
+      setUserApiKey(request.apikey);
+      setLoggedIn(true);
+
       // ToDo: Check here if user is admin or not and if true, change the status
       // To do that create a new endpoint, or check the groups the response above returns.
 
@@ -74,7 +83,10 @@ function App() {
       setRegInvite('');
 
       const streamResponse = await streamservice.fetchStreams();
+      console.log("Response:");
       console.log(streamResponse);
+      setUserStreams(streamResponse);
+      console.log(userStreams);
 
     } catch (e: unknown) {
 
@@ -97,6 +109,8 @@ function App() {
     <div className='hero'>
       <div className='container'>
         <center>You have logged in successfully!</center>
+        <br />
+        <Streamlist items={userStreams} userApiKey={userApiKey} />
       </div>
     </div>
    )
