@@ -19,7 +19,7 @@ userRouter.get('/admintest', isAdmin, isAdminTest);
 
 userRouter.post('/users/newinvite', isAdmin, newInviteEndpoint);
 
-userRouter.get('/users/getInvites', isAdmin, getInvites);
+userRouter.get('/users/getinvites', isAdmin, getInvites);
 
 userRouter.post('/users/edit/:id', isAdmin, userEdit);
 

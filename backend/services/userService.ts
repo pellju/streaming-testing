@@ -94,19 +94,28 @@ const login = async (req: Request, res: Response) => {
                     res.status(500).json({ "Error": "A serverside error!" });
                 } else {
                     const token = jwt.sign({ id: existingUser._id }, process.env.COOKIETOKENSECRET, {algorithm: 'HS256', allowInsecureKeySizes: true, expiresIn: 3600,});
-                    req.session.token = { key: token };
+                    //req.session.token = { key: token };
 
                     const roles = [];
                     for (let i = 0; i < existingUser.roles.length; i++) {
                         roles.push(existingUser.roles[i]);
                     }
+                    const bearerToken: string = `Bearer ${token}`;
+                    res.setHeader('Authorization', `${bearerToken}`);
 
+                    if (process.env.ENVIRONMENT == "DEV") { // Checking if this is about development environment -> allowing setting the cookie using HTTP
+                        console.log("Setting development environment cookie!");
+                        res.cookie('auth_token', `Bearer ${token}`, { httpOnly: true, secure: false, sameSite: 'lax', maxAge: 60 * 60 * 1000 });
+                    } else {
+                        res.cookie('auth_token', `Bearer ${token}`, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 60 * 60 * 1000 });
+                    }
+                    
                     res.status(200).send({
                         id: existingUser._id,
                         username: existingUser.username,
                         roles: roles,
                         apikey: existingUser.apikey,
-                        token: token
+                        //token: bearerToken
                     });
                 }
             }
@@ -119,11 +128,15 @@ const login = async (req: Request, res: Response) => {
     }
 }
 
+// This needs to be re-written!
 const logout = async(req: Request, res: Response) => {
     try {
-
-        if (req.session.token) {
-            req.session.token = { key: null };
+        if (req.cookies.auth_token) {
+            if (process.env.ENVIRONMENT == "DEV") {
+                res.clearCookie('auth_token', { httpOnly: true, sameSite: 'lax'});
+            } else {
+                res.clearCookie('auth_token', { httpOnly: true, secure: true, sameSite: 'lax'});
+            }
             return res.send({ 'Information': 'Logout successful' });
         } else {
             return res.send({ 'Information': 'Logout failed: not logged in.' });
@@ -170,11 +183,11 @@ const editUser = async(req: Request, res: Response) => {
 const renewingAPIkey = async (req: Request, res: Response) => {
     // The idea is that the user can renew their API-key using this function.
     // Basically, the authorization has been done already at this point
-    if (!req.headers || !req.headers.authorization) {
-        return res.status(400).json({ 'Error': 'Token missing' });
+    if (!req.cookies || !req.cookies.auth_token) {
+        return res.status(401).json({ 'Error': 'Token missing' });
     } else {
         try {
-            const userID: string | null = extractUserFromToken(req.headers.authorization.toString());
+            const userID: string | null = extractUserFromToken(req.cookies.auth_token.toString());
             if (!userID) {
                 return res.status(500).json({ "Error": "Error with the authorization "});
             } else {

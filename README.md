@@ -3,7 +3,7 @@
 The project is heavily in progress (although the backend is functioning somewhat well).
 
 The purpose of this project is to be investigate what it takes to create stream.streaming service. The streaming-part is built using [node-fluent-ffmpeg](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg).
-Also, as a personal experiment, one purpose of this project is to improve my skills on TypeScript and NextJS. MongoDB is used for storing the metadata of streams.
+Also, as a personal experiment, one purpose of this project is to improve my skills on TypeScript and React. MongoDB is used for storing the metadata of streams.
 
 Users can view streams using their link containing their own API-key (for instance, by using VLC).
 
