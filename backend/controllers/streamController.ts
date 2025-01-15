@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction } from 'express';
-import { streams, openingStream, deleteStream } from '../services/ffmpegService';
-import { removeStreamDatabaseObject, createStreamDatabaseObject, findStreamsUserCanSee, findAllStreams } from '../services/streamDatabaseService';
+import { streams, openingStream, deleteStream, restartingStream } from '../services/ffmpegService';
+import { removeStreamDatabaseObject, createStreamDatabaseObject, findStreamsUserCanSee, findAllStreams, fetchStreamObjectFromDatabase } from '../services/streamDatabaseService';
 import { db } from '../models';
 import { StreamInterface } from '../models/stream.model';
 
@@ -96,8 +96,20 @@ const restartStream = async (req: Request, res: Response, next: NextFunction) =>
     if (req.params === undefined || stream === undefined) {
         res.status(400).json({ "Error": "Stream name defined!" });
     } else {
+        // the deleteStream should be conditional, i.e. if there are less than X minutes, the stream won't be deleted
         if (deleteStream(stream)) {
-            // Create the magic to restart the stream
+            const infos = await fetchStreamObjectFromDatabase(stream); // ToDo: a proper type
+            if (infos) {
+                const restart = await restartingStream(infos);
+                if (restart) {
+                    res.status(201).json({ "Information" : "Success!"});
+                } else {
+                    res.status(400).json({ "Error": "Error restarting stream" });
+                }
+                
+            } else {
+                res.status(400).json({ "Error": "Failed fetching the metadata of the stream!" });
+            }
         } else {
             res.status(400).json({ "Error": "Failed delete the existing stream!" });
         }

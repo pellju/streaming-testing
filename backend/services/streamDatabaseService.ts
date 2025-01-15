@@ -102,4 +102,23 @@ const fetchStreamObjectFromDatabase = async(streamname: string) => {
     }
 }
 
-export { createStreamDatabaseObject, removeStreamDatabaseObject, findStreamsUserCanSee, findAllStreams, fetchStreamObjectFromDatabase }
+const updateStreamLastStart = async(streamname: string) => {
+    try {
+        const time = Date.now();
+        console.log(time);
+        const replacedStream: Stream | null = await db.Stream.findOneAndUpdate({ name: streamname, lastStart: time });
+        console.log(replacedStream);
+        if (replacedStream) {
+            return true;
+        } else {
+            console.log("Error replacing lastStart!");
+            return false;
+        }
+    } catch (e: any) {
+        console.log("Error replacing lastStart:");
+        console.log(e.message);
+        return false;
+    }
+}
+
+export { createStreamDatabaseObject, removeStreamDatabaseObject, findStreamsUserCanSee, findAllStreams, fetchStreamObjectFromDatabase, updateStreamLastStart }

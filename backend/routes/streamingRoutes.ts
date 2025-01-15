@@ -1,6 +1,6 @@
 import express, {Router} from 'express';
 
-import { addStream, listStreamNames, removeStream } from '../controllers/streamController';
+import { addStream, listStreamNames, removeStream, restartStream } from '../controllers/streamController';
 import { isAdmin } from '../middlewares/authJwt';
 import { checkIfTokenIsValid } from '../middlewares/authJwt';
 
@@ -12,7 +12,7 @@ streamingRouter.get('/streams', checkIfTokenIsValid, listStreamNames);
 
 streamingRouter.delete('/remove/:name', isAdmin, removeStream);
 
-streamingRouter.put('/restart/:stream', checkIfTokenIsValid, ); // Add the controller function
+streamingRouter.put('/restart/:stream', checkIfTokenIsValid, restartStream);
 
 
 if (process.env.ENVIRONMENT == "DEV") {
@@ -22,7 +22,7 @@ if (process.env.ENVIRONMENT == "DEV") {
 
     streamingRouter.delete('/dev/remove/:name', removeStream);
 
-    streamingRouter.put('/restart/:stream', ) // Add the controller function
+    streamingRouter.put('/dev/restart/:stream', restartStream);
 }
 
 export { streamingRouter }
