@@ -8,12 +8,13 @@ const addStream = async (req: Request, res: Response, next: NextFunction) => {
 
     // Checking if required fields are given
     const body = req.body;
-    if (body === undefined || body.input === undefined || body.name === undefined || body.category === undefined || body.permission === undefined) {
+    if (body === undefined || body.input === undefined || body.name === undefined || body.realname === undefined || body.category === undefined || body.permission === undefined) {
         res.status(400).json({ 'Error': 'Incorrect body'});
     } else {
         // ToDo: Add metadatainfo
         const input: string = body.input;
         const name: string = body.name;
+        const realName: string = body.realname;
         const disableTlsCheck: number = body.disableTlsCheck;
         const category: string = body.category;
         const permission: string = body.permission;
@@ -36,8 +37,8 @@ const addStream = async (req: Request, res: Response, next: NextFunction) => {
                 if (!openingStream(input, name, checkTls)) {
                     res.status(400).json({ 'Error': 'There was an error creating the stream!' });
                 } else {
-                    // If the stream object is properly created, create an item to database
-                    const streams: StreamInterface[] | null = await createStreamDatabaseObject(name, input, category, permission);
+                    // If the stream object is properly created, create an item to database                    
+                    const streams: StreamInterface[] | null = await createStreamDatabaseObject(name, realName, input, category, permission, disableTlsCheck);
                     // Checking if the newly created item exists there:
                     // If exists, confirm that everything works, but if not, remove the stream and tell user that there has been an error
                     const checkingStreamCheck: StreamInterface | null = await db.Stream.findOne({ name: name });
@@ -90,4 +91,17 @@ const listStreamNames = async (req: Request, res: Response, next: NextFunction) 
     }
 };
 
-export { listStreamNames, addStream, removeStream }
+const restartStream = async (req: Request, res: Response, next: NextFunction) => {
+    const stream: string = req.params.stream;
+    if (req.params === undefined || stream === undefined) {
+        res.status(400).json({ "Error": "Stream name defined!" });
+    } else {
+        if (deleteStream(stream)) {
+            // Create the magic to restart the stream
+        } else {
+            res.status(400).json({ "Error": "Failed delete the existing stream!" });
+        }
+    }
+}
+
+export { listStreamNames, addStream, removeStream, restartStream }

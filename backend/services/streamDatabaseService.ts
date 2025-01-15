@@ -1,3 +1,4 @@
+import { Stream } from "stream";
 import { db } from "../models";
 import { StreamInterface } from "../models/stream.model";
 
@@ -33,7 +34,7 @@ const findStreamsUserCanSee = async(roles: string[]) => {
 }
 
 // Returning streaming list
-const createStreamDatabaseObject= async(name: string, url: string, category: string, permissionRole: string): Promise<StreamInterface[] | null>  => {
+const createStreamDatabaseObject = async(name: string, realName: string, url: string, category: string, permissionRole: string, disableTlsCheck: number): Promise<StreamInterface[] | null>  => {
 
     try {
        const validRoles: string[] = db.ROLES;
@@ -44,8 +45,11 @@ const createStreamDatabaseObject= async(name: string, url: string, category: str
 
         const newStreamObject = new db.Stream({
             name: name,
+            realName: realName,
             url: url,
             category: category,
+            lastStart: 0,
+            disableTlsCheck: 0
         });
 
         const correctRole = await db.Role.find({
@@ -81,4 +85,21 @@ const removeStreamDatabaseObject = async(name: string) => {
     }
 }
 
-export { createStreamDatabaseObject, removeStreamDatabaseObject, findStreamsUserCanSee, findAllStreams }
+const fetchStreamObjectFromDatabase = async(streamname: string) => {
+    try {
+        const wantedStream: Stream | null = await db.Stream.findOne({ name: streamname });
+        if (wantedStream) {
+            return wantedStream;
+        } else {
+            console.log("Failed to find the following stream:");
+            console.log(streamname);
+            return null; // Enhance the information
+        }
+    } catch (e: any) {
+        console.log("Error finding the following stream:");
+        console.log(streamname)
+        return null;
+    }
+}
+
+export { createStreamDatabaseObject, removeStreamDatabaseObject, findStreamsUserCanSee, findAllStreams, fetchStreamObjectFromDatabase }
