@@ -12,6 +12,8 @@ streamingRouter.get('/streams', checkIfTokenIsValid, listStreamNames);
 
 streamingRouter.delete('/remove/:name', isAdmin, removeStream);
 
+streamingRouter.put('/restart/:stream', checkIfTokenIsValid, ); // Add the controller function
+
 
 if (process.env.ENVIRONMENT == "DEV") {
     streamingRouter.post('/dev/newstream', addStream);
@@ -19,6 +21,8 @@ if (process.env.ENVIRONMENT == "DEV") {
     streamingRouter.get('/dev/streams', listStreamNames);
 
     streamingRouter.delete('/dev/remove/:name', removeStream);
+
+    streamingRouter.put('/restart/:stream', ) // Add the controller function
 }
 
 export { streamingRouter }
