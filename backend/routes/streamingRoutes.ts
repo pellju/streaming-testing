@@ -12,7 +12,7 @@ streamingRouter.get('/streams', checkIfTokenIsValid, listStreamNames);
 
 streamingRouter.delete('/remove/:name', isAdmin, removeStream);
 
-streamingRouter.put('/restart/:stream', checkIfTokenIsValid, restartStream);
+streamingRouter.post('/restart/:stream', checkIfTokenIsValid, restartStream);
 
 
 if (process.env.ENVIRONMENT == "DEV") {
@@ -22,7 +22,7 @@ if (process.env.ENVIRONMENT == "DEV") {
 
     streamingRouter.delete('/dev/remove/:name', removeStream);
 
-    streamingRouter.put('/dev/restart/:stream', restartStream);
+    streamingRouter.post('/dev/restart/:stream', restartStream);
 }
 
 export { streamingRouter }

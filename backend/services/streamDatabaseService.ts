@@ -105,9 +105,7 @@ const fetchStreamObjectFromDatabase = async(streamname: string) => {
 const updateStreamLastStart = async(streamname: string) => {
     try {
         const time = Date.now();
-        console.log(time);
         const replacedStream: Stream | null = await db.Stream.findOneAndUpdate({ name: streamname, lastStart: time });
-        console.log(replacedStream);
         if (replacedStream) {
             return true;
         } else {
