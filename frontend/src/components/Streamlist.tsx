@@ -1,11 +1,9 @@
 import React from "react"
+import { Stream } from "./Streaminfo";
+
+import Streaminfo from "./Streaminfo";
 
 const backendUrl: string = import.meta.env.VITE_BACKENDURL; //Includes  '/' as its last char
-
-type Stream = {
-    name: string, // ToDo: Move the type elsewhere and add more information, such as category
-    category: string,
-};
 
 interface StreamProps {
     items: Stream[],
@@ -26,7 +24,7 @@ const Streamlist: React.FC<StreamProps> = ({ items = [], userApiKey }) => {
                 <h2>Streams:</h2>
                 <div id="streamlist">
                     {itemList.map(item =>
-                        <li key={item.name}>{item.name} <i>(<a href={backendUrl+'secretstream/'+userApiKey+'/'+item.name+'.m3u8'}>.m3u8-Streaming link</a>)</i> [Category: {item.category}]</li>
+                        <Streaminfo name={item.name} realname={item.realname} category={item.category} userApiKey={userApiKey} />
                     )}
                 </div>
             </div>
