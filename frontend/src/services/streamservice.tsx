@@ -10,8 +10,14 @@ const fetchStreams = async() => {
 
 const restartStream = async(streamName: string) => {
     const restartUrl: string = backendUrl + 'restart/' + streamName; 
-    const response = await axios.post(restartUrl, { withCredentials: true });
-    return response.data;
+
+    try {
+        const response = await axios.post(restartUrl, {}, { withCredentials: true });
+        return response.data;
+    } catch {
+        console.log("There was an error with restartStream-function");
+        return null;
+    }
 }
 
 export default { fetchStreams, restartStream }
