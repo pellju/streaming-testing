@@ -8,4 +8,10 @@ const fetchStreams = async() => {
     return response.data;
 }
 
-export default { fetchStreams }
+const restartStream = async(streamName: string) => {
+    const restartUrl: string = backendUrl + 'restart/' + streamName; 
+    const response = await axios.post(restartUrl, { withCredentials: true });
+    return response.data;
+}
+
+export default { fetchStreams, restartStream }
