@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import streamservice from "../services/streamservice";
+import Streamplayer from "./Streamplayer";
 
 const backendUrl: string = import.meta.env.VITE_BACKENDURL; //Includes  '/' as its last char
 
@@ -18,6 +19,8 @@ interface StreaminfoProps {
 
 const Streaminfo: React.FC<StreaminfoProps> = ({ name, realname, category, userApiKey }) => {
 
+    const streamUrl: string = backendUrl+'secretstream/'+userApiKey+'/'+name+'.m3u8';
+
     // Use states and set some information for users if streams are being restarted etc...
     const handleStreamRestart = async (event: any) => {
         event.preventDefault();
@@ -34,7 +37,8 @@ const Streaminfo: React.FC<StreaminfoProps> = ({ name, realname, category, userA
     return (
         <div>
             <li key={name}>
-                {realname} <i>(<a href={backendUrl+'secretstream/'+userApiKey+'/'+name+'.m3u8'}>.m3u8-Streaming link</a>)</i> [Category: {category}] <form onSubmit={handleStreamRestart}><button type='submit'>Restart stream</button></form>
+                {realname} <i>(<a href={streamUrl}>.m3u8-Streaming link</a>)</i> [Category: {category}] <form onSubmit={handleStreamRestart}><button type='submit'>Restart stream</button></form>
+                <Streamplayer streamingUrl={streamUrl} />
             </li>
         </div>
     )
