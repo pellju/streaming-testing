@@ -15,11 +15,13 @@ interface StreaminfoProps {
     realname: string,
     category: string,
     userApiKey: string,
+    streamUrl: string,
+    setStreamUrl: any,
 }
 
-const Streaminfo: React.FC<StreaminfoProps> = ({ name, realname, category, userApiKey }) => {
+const Streaminfo: React.FC<StreaminfoProps> = ({ name, realname, category, userApiKey, streamUrl, setStreamUrl }) => {
 
-    const streamUrl: string = backendUrl+'secretstream/'+userApiKey+'/'+name+'.m3u8';
+    const liveStreamUrl: string = backendUrl+'secretstream/'+userApiKey+'/'+name+'.m3u8';
 
     // Use states and set some information for users if streams are being restarted etc...
     const handleStreamRestart = async (event: any) => {
@@ -34,11 +36,16 @@ const Streaminfo: React.FC<StreaminfoProps> = ({ name, realname, category, userA
         }
     }
 
+    const handleStreamUrl = (event: any) => {
+        event.preventDefault();
+        
+        setStreamUrl(liveStreamUrl);
+    }
+
     return (
         <div>
             <li key={name}>
-                {realname} <i>(<a href={streamUrl}>.m3u8-Streaming link</a>)</i> [Category: {category}] <form onSubmit={handleStreamRestart}><button type='submit'>Restart stream</button></form>
-                <Streamplayer streamingUrl={streamUrl} />
+                {realname} <i>(<a href={liveStreamUrl}>.m3u8-Streaming link</a>)</i> [Category: {category}] <form onSubmit={handleStreamUrl}><button type='submit'>Watch stream</button></form> <form onSubmit={handleStreamRestart}><button type='submit'>Restart stream</button></form>
             </li>
         </div>
     )

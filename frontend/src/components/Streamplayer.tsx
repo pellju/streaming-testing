@@ -39,7 +39,7 @@ const Streamplayer: React.FC<StreamplayerProps> = ({ streamingUrl }) => {
 
     return (
         <div>
-            <video width='854' height='480' ref={videoRef} controls>Your browser does not support the video tag.</video>
+            <video width='640' height='360' ref={videoRef} controls>Your browser does not support the video tag.</video>
         </div>
     )
 }

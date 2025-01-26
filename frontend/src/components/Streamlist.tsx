@@ -1,5 +1,6 @@
-import React from "react"
+import React, { useState } from "react"
 import { Stream } from "./Streaminfo";
+import Streamplayer from "./Streamplayer";
 
 import Streaminfo from "./Streaminfo";
 
@@ -11,8 +12,8 @@ interface StreamProps {
 }
 
 const Streamlist: React.FC<StreamProps> = ({ items = [], userApiKey }) => {
-        console.log("items...");
-        //console.log(items);
+        
+        const [streamUrl, setStreamUrl] = useState<string>('');
 
         let itemList: Stream[] = [];
         if (items.length > 0) {
@@ -21,10 +22,13 @@ const Streamlist: React.FC<StreamProps> = ({ items = [], userApiKey }) => {
 
         return (
             <div>
+                <h2>Videoplayer:</h2>
+                <Streamplayer streamingUrl={streamUrl} />
+                <br/>
                 <h2>Streams:</h2>
                 <div id="streamlist">
                     {itemList.map(item =>
-                        <Streaminfo name={item.name} realname={item.realname} category={item.category} userApiKey={userApiKey} />
+                        <Streaminfo name={item.name} realname={item.realname} category={item.category} userApiKey={userApiKey} streamUrl={streamUrl} setStreamUrl={setStreamUrl} />
                     )}
                 </div>
             </div>
