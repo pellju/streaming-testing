@@ -1,4 +1,3 @@
-import { Stream } from "stream";
 import { db } from "../models";
 import { StreamInterface } from "../models/stream.model";
 
@@ -87,7 +86,7 @@ const removeStreamDatabaseObject = async(name: string) => {
 
 const fetchStreamObjectFromDatabase = async(streamname: string) => {
     try {
-        const wantedStream: Stream | null = await db.Stream.findOne({ name: streamname });
+        const wantedStream: StreamInterface | null = await db.Stream.findOne({ name: streamname });
         if (wantedStream) {
             return wantedStream;
         } else {
@@ -105,7 +104,7 @@ const fetchStreamObjectFromDatabase = async(streamname: string) => {
 const updateStreamLastStart = async(streamname: string) => {
     try {
         const time = Date.now();
-        const replacedStream: Stream | null = await db.Stream.findOneAndUpdate({ name: streamname, lastStart: time });
+        const replacedStream: StreamInterface | null = await db.Stream.findOneAndUpdate({ name: streamname, lastStart: time });
         if (replacedStream) {
             return true;
         } else {

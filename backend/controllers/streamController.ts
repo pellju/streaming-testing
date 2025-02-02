@@ -97,21 +97,33 @@ const restartStream = async (req: Request, res: Response, next: NextFunction) =>
         res.status(400).json({ "Error": "Stream name defined!" });
     } else {
         // the deleteStream should be conditional, i.e. if there are less than X minutes, the stream won't be deleted
-        if (deleteStream(stream)) {
-            const infos = await fetchStreamObjectFromDatabase(stream); // ToDo: a proper type
-            if (infos) {
-                const restart = await restartingStream(infos);
-                if (restart) {
-                    res.status(201).json({ "Information" : "Success!"});
-                } else {
-                    res.status(400).json({ "Error": "Error restarting stream" });
-                }
-                
-            } else {
-                res.status(400).json({ "Error": "Failed fetching the metadata of the stream!" });
-            }
+        const infos: StreamInterface | null = await fetchStreamObjectFromDatabase(stream); // ToDo: a proper type
+        if (!infos) {
+            res.status(400).json({ "Error": "Issues finding the stream! "});
         } else {
-            res.status(400).json({ "Error": "Failed delete the existing stream!" });
+            const existingTime: number = (new Date(infos.lastStart)).getTime();
+            const currentTime: number = Date.now();
+            //console.log(infos.lastStart);
+            if (currentTime - existingTime > 2*60*1000) {
+            
+                if (deleteStream(stream)) {
+                    if (infos) {
+                        const restart = await restartingStream(infos);
+                        if (restart) {
+                            res.status(201).json({ "Information" : "Success!"});
+                        } else {
+                            res.status(400).json({ "Error": "Error restarting stream" });
+                        }
+                        
+                    } else {
+                        res.status(400).json({ "Error": "Failed fetching the metadata of the stream!" });
+                    }
+                } else {
+                    res.status(400).json({ "Error": "Failed delete the existing stream!" });
+                }
+            } else {
+                res.status(400).json({ "Error": "Failed to restart the stream: not enough time since the last restart!"});
+            }
         }
     }
 }
