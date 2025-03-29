@@ -17,9 +17,11 @@ interface StreaminfoProps {
     userApiKey: string,
     streamUrl: string,
     setStreamUrl: any,
+    isAdmin: boolean,
+    setUserStreams: any
 }
 
-const Streaminfo: React.FC<StreaminfoProps> = ({ name, realname, category, userApiKey, streamUrl, setStreamUrl }) => {
+const Streaminfo: React.FC<StreaminfoProps> = ({ name, realname, category, userApiKey, streamUrl, setStreamUrl, isAdmin, setUserStreams }) => {
 
     const liveStreamUrl: string = backendUrl+'secretstream/'+userApiKey+'/'+name+'.m3u8';
 
@@ -42,10 +44,24 @@ const Streaminfo: React.FC<StreaminfoProps> = ({ name, realname, category, userA
         setStreamUrl(liveStreamUrl);
     }
 
+    const handleStreamRemoval = async (event: any) => {
+        event.preventDefault();
+
+        try {
+            const response = await streamservice.deleteStream(name);
+            const streamResponse = await streamservice.fetchStreams();
+            setUserStreams(streamResponse);
+            console.log(response);
+        } catch (e: any) {
+            console.log("Error deleting the stream: ");
+            console.log(name);
+        } 
+    }
+
     return (
         <div>
             <li key={name}>
-                {realname} <i>(<a href={liveStreamUrl}>.m3u8-Streaming link</a>)</i> [Category: {category}] <form onSubmit={handleStreamUrl}><button type='submit'>Watch stream</button></form> <form onSubmit={handleStreamRestart}><button type='submit'>Restart stream</button></form>
+                {realname} <i>(<a href={liveStreamUrl}>.m3u8-Streaming link</a>)</i> [Category: {category}] <form onSubmit={handleStreamUrl}><button type='submit'>Watch stream</button></form> <form onSubmit={handleStreamRestart}><button type='submit'>Restart stream</button></form> {isAdmin && <form onSubmit={handleStreamRemoval}><button type='submit'>Delete stream</button></form>}
             </li>
         </div>
     )

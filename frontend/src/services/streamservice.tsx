@@ -20,4 +20,16 @@ const restartStream = async(streamName: string) => {
     }
 }
 
-export default { fetchStreams, restartStream }
+const deleteStream = async(streamName: string) => {
+    const deleteStreamUrl: string = backendUrl + 'remove/' + streamName;
+
+    try {
+        const response = await axios.delete(deleteStreamUrl, { withCredentials: true });
+        return response.data;
+    } catch {
+        console.log("There was an error with deleteStream-function");
+        return null;
+    }
+}
+
+export default { fetchStreams, restartStream, deleteStream }
