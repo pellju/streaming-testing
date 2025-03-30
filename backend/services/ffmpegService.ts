@@ -1,4 +1,6 @@
 import ffmpeg, {FfmpegCommand} from 'fluent-ffmpeg';
+import { Stream } from '../models/stream.model';
+import { updateStreamLastStart } from './streamDatabaseService';
 
 // Defining custom type for the combination of Strings (names) and Ffmpegs
 type streaminfo = {
@@ -69,4 +71,27 @@ const deleteStream = (name: string): boolean => {
     }
 }
 
-export { openingStream, streams, deleteStream}
+const restartingStream = async (streaminfo: any) => { // ToDo: Fix type
+    const name = streaminfo.name;
+    const url = streaminfo.url;
+    const disableTlsCheck = streaminfo.disableTlsCheck;
+    
+    const restartingStream = openingStream(url, name, disableTlsCheck);
+
+    if (restartingStream) {
+        // Return true, updating the lastStart, fetch the time using Date.now();
+        const updatedLastStart: boolean = await updateStreamLastStart(name);
+        if (updatedLastStart) {
+            return true;
+        } else {
+            console.log("Error updating lastStart, deleting stream!");
+            deleteStream(name);
+            return false;
+        }
+    } else {
+        console.log("Error opening stream!");
+        return false;
+    }
+}
+
+export { openingStream, streams, deleteStream, restartingStream}

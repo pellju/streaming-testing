@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import React, { useState } from 'react'
 import './App.css'
 
 if (!import.meta.env.VITE_BACKENDURL) {
@@ -11,11 +9,14 @@ if (!import.meta.env.VITE_BACKENDURL) {
 import Registration from './components/Registration'
 import Login from './components/Login'
 
+// Importing The form for admins to add new stream
+import AddingNewStream from './components/AddingNewStream';
+
 // Importing services
 import userservice from './services/userservice';
 import streamservice from './services/streamservice';
 
-import Streamlist from './components/Streamlist';
+import Streamlist from './components/Streamlist';0
 
 function App() {
   // Account-related management
@@ -69,6 +70,8 @@ function App() {
     try {
       const request = await userservice.login({ username: loginUsername, password: loginPassword});
       console.log(request);
+      const userRoles = request.roles;
+      userRoles.forEach((role: { name: string; }) => {if (role.name === 'admin'){ setIsAdmin(true) }});
 
       // ToDo: Implement a check that if the request is successfull (ensure that it's fine)
       setUserApiKey(request.apikey);
@@ -110,7 +113,8 @@ function App() {
       <div className='container'>
         <center>You have logged in successfully!</center>
         <br />
-        <Streamlist items={userStreams} userApiKey={userApiKey} />
+        <Streamlist items={userStreams} userApiKey={userApiKey} isAdmin={isAdmin} setUserStreams={setUserStreams} />
+        {isAdmin && <AddingNewStream setUserStreams={setUserStreams} />}
       </div>
     </div>
    )

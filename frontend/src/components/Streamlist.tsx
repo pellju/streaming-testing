@@ -1,32 +1,37 @@
-import React from "react"
+import React, { useState } from "react"
+import { Stream } from "./Streaminfo";
+import Streamplayer from "./Streamplayer";
+
+import Streaminfo from "./Streaminfo";
 
 const backendUrl: string = import.meta.env.VITE_BACKENDURL; //Includes  '/' as its last char
-
-type Stream = {
-    name: string, // ToDo: Move the type elsewhere and add more information, such as category
-    category: string,
-};
 
 interface StreamProps {
     items: Stream[],
     userApiKey: string,
+    isAdmin: boolean,
+    setUserStreams: any
 }
 
-const Streamlist: React.FC<StreamProps> = ({ items = [], userApiKey }) => {
-        console.log("items...");
-        //console.log(items);
+const Streamlist: React.FC<StreamProps> = ({ items = [], userApiKey, isAdmin, setUserStreams }) => {
+        
+        const [streamUrl, setStreamUrl] = useState<string>('');
 
         let itemList: Stream[] = [];
         if (items.length > 0) {
             itemList = items;
         }
 
+        // Add here a check to see if the user is admin, then create a new form to add a new stream
         return (
             <div>
+                <h2>Videoplayer:</h2>
+                <Streamplayer streamingUrl={streamUrl} />
+                <br/>
                 <h2>Streams:</h2>
                 <div id="streamlist">
                     {itemList.map(item =>
-                        <li key={item.name}>{item.name} <i>(<a href={backendUrl+'secretstream/'+userApiKey+'/'+item.name+'.m3u8'}>.m3u8-Streaming link</a>)</i> [Category: {item.category}]</li>
+                        <Streaminfo name={item.name} realname={item.realname} category={item.category} userApiKey={userApiKey} streamUrl={streamUrl} setStreamUrl={setStreamUrl} isAdmin={isAdmin} setUserStreams={setUserStreams} />
                     )}
                 </div>
             </div>

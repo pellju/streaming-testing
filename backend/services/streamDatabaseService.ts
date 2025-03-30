@@ -33,7 +33,7 @@ const findStreamsUserCanSee = async(roles: string[]) => {
 }
 
 // Returning streaming list
-const createStreamDatabaseObject= async(name: string, url: string, category: string, permissionRole: string): Promise<StreamInterface[] | null>  => {
+const createStreamDatabaseObject = async(name: string, realName: string, url: string, category: string, permissionRole: string, disableTlsCheck: number): Promise<StreamInterface[] | null>  => {
 
     try {
        const validRoles: string[] = db.ROLES;
@@ -44,8 +44,11 @@ const createStreamDatabaseObject= async(name: string, url: string, category: str
 
         const newStreamObject = new db.Stream({
             name: name,
+            realName: realName,
             url: url,
             category: category,
+            lastStart: 0,
+            disableTlsCheck: 0
         });
 
         const correctRole = await db.Role.find({
@@ -81,4 +84,38 @@ const removeStreamDatabaseObject = async(name: string) => {
     }
 }
 
-export { createStreamDatabaseObject, removeStreamDatabaseObject, findStreamsUserCanSee, findAllStreams }
+const fetchStreamObjectFromDatabase = async(streamname: string) => {
+    try {
+        const wantedStream: StreamInterface | null = await db.Stream.findOne({ name: streamname });
+        if (wantedStream) {
+            return wantedStream;
+        } else {
+            console.log("Failed to find the following stream:");
+            console.log(streamname);
+            return null; // Enhance the information
+        }
+    } catch (e: any) {
+        console.log("Error finding the following stream:");
+        console.log(streamname)
+        return null;
+    }
+}
+
+const updateStreamLastStart = async(streamname: string) => {
+    try {
+        const time = Date.now();
+        const replacedStream: StreamInterface | null = await db.Stream.findOneAndUpdate({ name: streamname, lastStart: time });
+        if (replacedStream) {
+            return true;
+        } else {
+            console.log("Error replacing lastStart!");
+            return false;
+        }
+    } catch (e: any) {
+        console.log("Error replacing lastStart:");
+        console.log(e.message);
+        return false;
+    }
+}
+
+export { createStreamDatabaseObject, removeStreamDatabaseObject, findStreamsUserCanSee, findAllStreams, fetchStreamObjectFromDatabase, updateStreamLastStart }
