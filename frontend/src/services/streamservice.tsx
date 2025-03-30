@@ -32,4 +32,27 @@ const deleteStream = async(streamName: string) => {
     }
 }
 
-export default { fetchStreams, restartStream, deleteStream }
+
+const addStream = async(name: string, realName: string, input: string, disableTlsCheck: boolean, category: string, permission: string) => {
+    
+    const streamInfo = {
+        name: name,
+        realname: realName,
+        input: input,
+        disableTlsCheck: disableTlsCheck,
+        category: category,
+        permission: permission
+    }
+    const newStreamUrl: string = backendUrl + 'newstream'
+    console.log(newStreamUrl);
+
+    try {
+        const response = await axios.post(newStreamUrl, streamInfo, { withCredentials: true });
+        return response.data;
+    } catch {
+        console.log("There was an error with addStream-function");
+        return null;
+    }
+}
+
+export default { fetchStreams, restartStream, deleteStream, addStream }

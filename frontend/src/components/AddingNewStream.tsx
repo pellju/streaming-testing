@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import streamservice from "../services/streamservice";
 
 interface AddingNewStreamProps {
-
+    setUserStreams: any
 }
 
-const AddingNewStream: React.FC<AddingNewStreamProps> = () => {
+const AddingNewStream: React.FC<AddingNewStreamProps> = ({ setUserStreams }) => {
     
     // useStates added here due to being an admin-only model, so no need for loading it in the main application
     const [name, setName] = useState<string>('');
@@ -21,14 +22,30 @@ const AddingNewStream: React.FC<AddingNewStreamProps> = () => {
         console.log("New value: ", disableTlsCheck);
     }
 
+    const addNewStream = async(event: any) => {
+        event.preventDefault();
+
+        try {
+            const response = await streamservice.addStream(name, realname, input, disableTlsCheck, category, permission);
+            console.log("Response: ");
+            console.log(response);
+            const streamResponse = await streamservice.fetchStreams();
+            setUserStreams(streamResponse);
+
+        } catch (e: any) {
+            console.log("Failed to add a new stream: ");
+            console.log(e.error);
+        }
+    }
+
     return (
         <div id="addingNewStream">
-            <form>
+            <form onSubmit={addNewStream}>
                 <div>
-                    Name of the stream (can contain spaces): <input type='text' value={name} name='streamName' onChange={({target}) => setName(target.value)} />
+                    Name of the stream (cannot contain spaces): <input type='text' value={name} name='streamName' onChange={({target}) => setName(target.value)} />
                 </div>
                 <div>
-                    Real name of the stream (cannot contain spaces): <input type='text' value={realname} name='realName' onChange={({target}) => setRealname(target.value)}/>
+                    Real name of the stream (can contain spaces): <input type='text' value={realname} name='realName' onChange={({target}) => setRealname(target.value)}/>
                 </div>
                 <div>
                     Input URL: <input type='text' value={input} name='input' onChange={({target}) => setInput(target.value)}/>

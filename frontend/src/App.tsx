@@ -114,7 +114,7 @@ function App() {
         <center>You have logged in successfully!</center>
         <br />
         <Streamlist items={userStreams} userApiKey={userApiKey} isAdmin={isAdmin} setUserStreams={setUserStreams} />
-        {isAdmin && <AddingNewStream />}
+        {isAdmin && <AddingNewStream setUserStreams={setUserStreams} />}
       </div>
     </div>
    )
