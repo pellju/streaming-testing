@@ -21,7 +21,16 @@ const openingStream = (input: string, name: string, disableTlsCheck: boolean): b
 
     try {
         // Consider that input has been sanitized
-        const stream: FfmpegCommand = ffmpeg(input)
+        //const stream: FfmpegCommand = ffmpeg(input)
+        const stream: FfmpegCommand = ffmpeg()
+        .addOption('-reconnect', '1')
+        .addOption('-reconnect_streamed', '1')
+        .addOption('-reconnect_at_eof', '1')
+        .addOption('-reconnect_delay_max', '10')
+        //.addOption('-reconnect_on_http_error', ' 4xx,5xx') // Causing issues for some reason, checking if works without it
+        .addOption('-fflags', '+discardcorrupt+igndts+genpts')
+        .addOption('-err_detect', 'ignore_err')
+        .input(input)
         .addOption('-c', 'copy')
         .addOption('-f', 'hls')
         .addOption('-hls_time', '10')
